@@ -94,10 +94,9 @@ jobs:
             
             cd /home/root/appsite
             
-            # Pull latest code
-            # Note: This assumes the server has credentials or the repo is public.
-            # If private, you might need to configure a token or SSH key on the server.
-            git pull origin main
+            # Force sync with remote to discard local changes
+            git fetch --all
+            git reset --hard origin/main
             
             # Create .env file
             echo "$ENV_FILE_CONTENT" > .env
