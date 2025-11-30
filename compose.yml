@@ -1,0 +1,102 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - gallery-network
+    restart: always
+
+  umami:
+    container_name: umami
+    image: ghcr.io/umami-software/umami:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}/umami
+      APP_SECRET: ${UMAMI_APP_SECRET}
+      ALLOWED_FRAME_URLS: ${ALLOWED_FRAME_URLS}
+    depends_on:
+      db:
+        condition: service_healthy
+    init: true
+    restart: always
+    networks:
+      - gallery-network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://localhost:3000/api/heartbeat" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.umami.rule=Host(`${UMAMI_HOST}`)"
+      - "traefik.http.routers.umami.entrypoints=websecure"
+      - "traefik.http.routers.umami.tls.certresolver=myresolver"
+      - "traefik.http.services.umami.loadbalancer.server.port=3000"
+
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    hostname: db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: galleria
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./src/db/data:/var/lib/postgresql/data
+      - ./src/db/initdb/:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - gallery-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d galleria" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: app
+    image: ${DOCKER_IMAGE_NAME:-daubog44/galleria-app:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}/galleria
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}/galleria
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    networks:
+      - gallery-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.app-ratelimit.ratelimit.average=100"
+      - "traefik.http.middlewares.app-ratelimit.ratelimit.burst=50"
+      - "traefik.http.routers.app.middlewares=app-ratelimit"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
+
+networks:
+  gallery-network:

@@ -1,0 +1,114 @@
+name: Deploy to Oracle Cloud
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/galleria-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: galleria
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Migrations and Seed
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/galleria
+          NODE_ENV: development
+        run: |
+          npx drizzle-kit push
+          npx tsx src/db/seed.ts
+
+      - name: Build Next.js App
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/galleria
+          NEXT_PUBLIC_SITE_URL: https://${{ secrets.DOMAIN_NAME }}
+          NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+          NEXT_PUBLIC_UMAMI_SHARE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_SHARE_ID }}
+          NEXT_PUBLIC_UMAMI_SCRIPT_URL: https://${{ secrets.UMAMI_HOST }}/script.js
+        run: npm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          debug: true
+          envs: ENV_FILE_CONTENT
+          script: |
+            # Ensure directory exists (clone if not)
+            if [ ! -d "/home/root/appsite" ]; then
+              git clone https://github.com/${{ github.repository }}.git /home/root/appsite
+            fi
+            
+            cd /home/root/appsite
+            
+            # Pull latest code
+            # Note: This assumes the server has credentials or the repo is public.
+            # If private, you might need to configure a token or SSH key on the server.
+            git pull origin main
+            
+            # Create .env file
+            echo "$ENV_FILE_CONTENT" > .env
+
+            # Ensure scripts are executable
+            chmod +x start.sh entrypoint.sh
+            
+            # Start application
+            ./start.sh
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+          ENV_FILE_CONTENT: ${{ secrets.ENV_FILE_CONTENT }}
+          DOCKER_IMAGE_NAME: ${{ env.DOCKER_IMAGE_NAME }}
+          REPO_URL: https://oauth2:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git

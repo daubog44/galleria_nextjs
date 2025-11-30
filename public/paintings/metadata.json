@@ -1,0 +1,25 @@
+[
+  {
+    "file": "1.jpeg",
+    "nome": "Caos Calmo",
+    "storia": "Quest'opera rappresenta la tranquillità che si può trovare anche nei momenti più turbolenti della vita...",
+    "prezzo": "€ 800",
+    "venduto": false,
+    "link_acquisto": "#"
+  },
+  {
+    "file": "2.jpg",
+    "nome": "Sguardo",
+    "storia": "Un ritratto che cattura l'essenza di un'emozione fugace.",
+    "prezzo": "€ 1200",
+    "venduto": true
+  },
+  {
+    "file": "3.jpg",
+    "nome": "Paesaggio Toscano",
+    "storia": "I colori caldi della toscana in un'opera che trasmette pace e serenità.",
+    "prezzo": "€ 950",
+    "venduto": false,
+    "link_acquisto": "#"
+  }
+]
