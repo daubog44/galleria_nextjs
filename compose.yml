@@ -28,7 +28,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}/umami
       APP_SECRET: ${UMAMI_APP_SECRET}
-      ALLOWED_FRAME_URLS: ${ALLOWED_FRAME_URLS}
+      ALLOWED_FRAME_URLS: "https://galleriaermetica.it https://analytics.galleriaermetica.it"
     depends_on:
       db:
         condition: service_healthy
