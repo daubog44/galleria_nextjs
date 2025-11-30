@@ -29,8 +29,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
+    modal,
 }: Readonly<{
     children: React.ReactNode;
+    modal: React.ReactNode;
 }>) {
     return (
         <html lang="it" suppressHydrationWarning>
@@ -39,6 +41,7 @@ export default function RootLayout({
                     <Navbar />
                     <main className="flex-grow">
                         {children}
+                        {modal}
                     </main>
                     <Footer />
                     <BackToTop />

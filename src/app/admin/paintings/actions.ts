@@ -18,6 +18,7 @@ export async function createPainting(formData: FormData) {
     const seoTitle = formData.get('seoTitle') as string;
     const seoDescription = formData.get('seoDescription') as string;
     const seoAltText = formData.get('seoAltText') as string;
+    const externalLink = formData.get('externalLink') as string;
 
     const price = priceRaw ? parseFloat(priceRaw) : null;
     const width = widthRaw ? parseFloat(widthRaw) : null;
@@ -38,6 +39,7 @@ export async function createPainting(formData: FormData) {
         seoTitle,
         seoDescription,
         seoAltText,
+        externalLink,
     });
 
     revalidatePath('/', 'page');
@@ -58,6 +60,7 @@ export async function updatePainting(formData: FormData) {
     const seoTitle = formData.get('seoTitle') as string;
     const seoDescription = formData.get('seoDescription') as string;
     const seoAltText = formData.get('seoAltText') as string;
+    const externalLink = formData.get('externalLink') as string;
 
     const price = priceRaw ? parseFloat(priceRaw) : null;
     const width = widthRaw ? parseFloat(widthRaw) : null;
@@ -79,6 +82,7 @@ export async function updatePainting(formData: FormData) {
             seoTitle,
             seoDescription,
             seoAltText,
+            externalLink,
         })
         .where(eq(paintings.id, id));
 

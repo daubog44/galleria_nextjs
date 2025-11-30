@@ -18,6 +18,7 @@ interface Painting {
     seoTitle: string | null;
     seoDescription: string | null;
     seoAltText: string | null;
+    externalLink: string | null;
 }
 
 export default function EditForm({ painting }: { painting: Painting }) {
@@ -150,6 +151,20 @@ export default function EditForm({ painting }: { painting: Painting }) {
                             placeholder="0.0"
                         />
                     </div>
+                </div>
+
+                <div>
+                    <label htmlFor="externalLink" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Link Esterno (es. Etsy)
+                    </label>
+                    <input
+                        type="url"
+                        name="externalLink"
+                        id="externalLink"
+                        defaultValue={painting.externalLink || ''}
+                        className="block w-full rounded-lg border-gray-300 dark:border-neutral-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-neutral-800 dark:text-white py-3 px-4 transition-colors"
+                        placeholder="https://..."
+                    />
                 </div>
 
                 <div>

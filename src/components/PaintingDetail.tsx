@@ -42,52 +42,66 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
     // Modal with info styling (Legacy match)
     if (isModal) {
         return (
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 max-w-6xl mx-auto pointer-events-auto">
-                <div className="relative flex items-center justify-center">
+            <div className="flex flex-col md:flex-row items-stretch justify-center gap-6 md:gap-8 w-full max-w-[95vw] lg:max-w-7xl mx-auto pointer-events-auto p-4">
+                <div className="relative flex-1 flex items-center justify-center min-h-[50vh]">
                     <Image
                         src={painting.imageUrl}
                         alt={painting.title || "Opera d'arte"}
-                        className="object-contain max-h-[60vh] md:max-h-[85vh] max-w-[90vw] md:max-w-[50vw] w-auto h-auto rounded-md shadow-2xl"
+                        className="object-contain max-h-[85vh] w-auto h-auto rounded-md shadow-2xl drop-shadow-2xl"
                         priority
                     />
                 </div>
 
-                <div className="w-full md:w-[45%] bg-black/70 backdrop-blur-md text-gray-300 p-6 md:p-8 rounded-lg shadow-xl mt-4 md:mt-0">
+                <div className="w-full md:w-[400px] lg:w-[450px] flex-shrink-0 bg-black/80 backdrop-blur-xl text-gray-300 p-8 rounded-xl shadow-2xl flex flex-col justify-center border border-white/10">
                     {painting.title && (
-                        <h3 className="text-3xl font-serif text-white mb-6">{painting.title}</h3>
+                        <h3 className="text-3xl font-serif text-white mb-6 leading-tight">{painting.title}</h3>
                     )}
 
                     {painting.description && (
-                        <div className="prose prose-invert prose-sm mb-6 text-gray-300 leading-relaxed">
+                        <div className="prose prose-invert prose-sm mb-8 text-gray-300 leading-relaxed opacity-90">
                             <p>{painting.description}</p>
                         </div>
                     )}
 
                     {painting.width && painting.height && (
-                        <p className="text-sm text-gray-400 mb-4">
-                            Dimensioni: {painting.width} x {painting.height} cm
+                        <p className="text-sm text-gray-400 mb-6 uppercase tracking-widest border-b border-white/10 pb-4">
+                            {painting.width} × {painting.height} cm
                         </p>
                     )}
 
-                    <div className="mt-auto space-y-4 pt-4 border-t border-gray-600/50">
+                    <div className="mt-auto space-y-6">
                         {painting.price && !painting.sold && (
-                            <p className="text-xl font-medium text-green-300">
-                                <strong>Prezzo:</strong> € {typeof painting.price === 'number' ? painting.price.toFixed(2) : painting.price}
-                            </p>
+                            <div className="flex items-baseline justify-between">
+                                <span className="text-sm uppercase tracking-widest text-gray-400">Prezzo</span>
+                                <span className="text-2xl font-serif text-white">
+                                    € {typeof painting.price === 'number' ? painting.price.toFixed(2) : painting.price}
+                                </span>
+                            </div>
                         )}
 
                         {painting.sold ? (
-                            <p className="text-xl font-medium text-red-300 uppercase tracking-wider">
-                                <em>Venduto</em>
-                            </p>
+                            <div className="w-full bg-red-900/30 border border-red-500/30 text-red-200 text-center py-3 rounded-lg uppercase tracking-widest font-medium">
+                                Venduto
+                            </div>
                         ) : (
-                            // Link to purchase (placeholder or actual link if exists)
-                            <a
-                                href="/contatti"
-                                className="block w-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-center py-3 px-6 rounded-full font-medium hover:bg-neutral-800 dark:hover:bg-gray-200 transition-colors duration-300"
-                            >
-                                Contattami
-                            </a>
+                            // Link to purchase (external or contact)
+                            painting.externalLink ? (
+                                <a
+                                    href={painting.externalLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full bg-white text-black text-center py-4 rounded-lg font-medium hover:bg-gray-200 transition-all duration-300 uppercase tracking-widest text-sm shadow-lg hover:shadow-white/20"
+                                >
+                                    Acquista Ora
+                                </a>
+                            ) : (
+                                <a
+                                    href="/contatti"
+                                    className="block w-full bg-white text-black text-center py-4 rounded-lg font-medium hover:bg-gray-200 transition-all duration-300 uppercase tracking-widest text-sm shadow-lg hover:shadow-white/20"
+                                >
+                                    Contattami
+                                </a>
+                            )
                         )}
                     </div>
                 </div>
@@ -95,51 +109,79 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
         );
     }
 
-    // Standalone page styling (keep clean/light or adapt)
+    // Standalone page styling - Premium & Immersive
     return (
-        <div className="flex flex-col md:flex-row w-full bg-white dark:bg-[#1a1a1a]">
-            <div className="w-full md:w-2/3 relative bg-gray-100 dark:bg-[#2a2a2a] min-h-[50vh] md:min-h-[80vh]">
-                <Image
-                    src={painting.imageUrl}
-                    alt={painting.title || 'Opera d\'arte'}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 100vw, 70vw"
-                    priority
-                />
-            </div>
-            <div className="w-full md:w-1/3 p-8 flex flex-col justify-center overflow-y-auto">
-                <h1 className="text-3xl font-light mb-4 uppercase tracking-wide dark:text-white">{painting.title || 'Senza Titolo'}</h1>
-
-                {painting.description && (
-                    <div className="prose prose-sm text-gray-600 dark:text-gray-300 mb-4">
-                        <p>{painting.description}</p>
+        <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col">
+            <div className="flex-grow flex flex-col lg:flex-row h-full">
+                {/* Image Section - Centered and Large */}
+                <div className="w-full lg:w-2/3 relative bg-stone-200 dark:bg-[#121212] min-h-[60vh] lg:min-h-screen flex items-center justify-center p-8 lg:p-12">
+                    <div className="relative w-full h-full max-h-[85vh] flex items-center justify-center">
+                        <Image
+                            src={painting.imageUrl}
+                            alt={painting.title || 'Opera d\'arte'}
+                            fill
+                            className="object-contain drop-shadow-2xl"
+                            sizes="(max-width: 1024px) 100vw, 70vw"
+                            priority
+                        />
                     </div>
-                )}
+                </div>
 
-                {painting.width && painting.height && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-                        Dimensioni: {painting.width} x {painting.height} cm
-                    </p>
-                )}
+                {/* Details Section - Elegant Typography */}
+                <div className="w-full lg:w-1/3 bg-white dark:bg-stone-900 p-8 lg:p-16 flex flex-col justify-center shadow-2xl z-10">
+                    <div className="max-w-md mx-auto w-full space-y-8">
+                        <header>
+                            <h1 className="text-4xl lg:text-5xl font-serif font-light text-stone-900 dark:text-stone-50 mb-4 leading-tight">
+                                {painting.title || 'Senza Titolo'}
+                            </h1>
+                            <div className="h-1 w-20 bg-stone-900 dark:bg-stone-50 opacity-20"></div>
+                        </header>
 
-                <div className="mt-auto space-y-4">
-                    {painting.price && (
-                        <p className="text-2xl font-medium text-gray-900 dark:text-white">€ {typeof painting.price === 'number' ? painting.price.toFixed(2) : painting.price}</p>
-                    )}
+                        {painting.description && (
+                            <div className="prose prose-stone dark:prose-invert prose-lg leading-relaxed text-stone-600 dark:text-stone-300 font-sans font-light">
+                                <p>{painting.description}</p>
+                            </div>
+                        )}
 
-                    {painting.sold ? (
-                        <span className="inline-block bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300 px-4 py-2 text-sm uppercase tracking-wider">
-                            Venduto
-                        </span>
-                    ) : (
-                        <Link
-                            href="/contatti"
-                            className="block w-full text-center bg-black text-white py-3 px-6 uppercase tracking-widest hover:bg-gray-800 transition-colors text-sm dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                        >
-                            Contattami
-                        </Link>
-                    )}
+                        <div className="space-y-2 py-6 border-t border-stone-200 dark:border-stone-800">
+                            {painting.width && painting.height && (
+                                <p className="text-sm uppercase tracking-widest text-stone-500 dark:text-stone-400">
+                                    Dimensioni: {painting.width} × {painting.height} cm
+                                </p>
+                            )}
+                            {painting.price && !painting.sold && (
+                                <p className="text-3xl font-serif text-stone-900 dark:text-stone-50">
+                                    € {typeof painting.price === 'number' ? painting.price.toFixed(2) : painting.price}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="pt-4">
+                            {painting.sold ? (
+                                <span className="inline-block w-full text-center bg-stone-200 text-stone-500 dark:bg-stone-800 dark:text-stone-400 py-4 px-8 uppercase tracking-widest text-sm font-medium">
+                                    Opera Venduta
+                                </span>
+                            ) : (
+                                painting.externalLink ? (
+                                    <a
+                                        href={painting.externalLink!}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block w-full text-center bg-stone-900 text-white dark:bg-stone-50 dark:text-stone-900 py-4 px-8 uppercase tracking-widest text-sm font-medium hover:bg-stone-700 dark:hover:bg-stone-200 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                                    >
+                                        Acquista
+                                    </a>
+                                ) : (
+                                    <Link
+                                        href="/contatti"
+                                        className="block w-full text-center border border-stone-900 text-stone-900 dark:border-stone-50 dark:text-stone-50 py-4 px-8 uppercase tracking-widest text-sm font-medium hover:bg-stone-900 hover:text-white dark:hover:bg-stone-50 dark:hover:text-stone-900 transition-all duration-300"
+                                    >
+                                        Contattami per info
+                                    </Link>
+                                )
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

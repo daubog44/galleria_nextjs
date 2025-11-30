@@ -13,6 +13,7 @@ export const paintings = pgTable('paintings', {
     seoTitle: text('seo_title'),
     seoDescription: text('seo_description'),
     seoAltText: text('seo_alt_text'),
+    externalLink: text('external_link'),
 });
 
 export const biography = pgTable('biography', {

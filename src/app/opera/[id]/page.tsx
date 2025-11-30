@@ -2,8 +2,9 @@ import PaintingDetail from '@/components/PaintingDetail';
 import { getPainting } from '@/app/actions';
 
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-    const id = parseInt(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id: idStr } = await params;
+    const id = parseInt(idStr);
     const painting = await getPainting(id);
     if (!painting) return {};
 
@@ -20,8 +21,9 @@ import { JsonLd } from '@/components/JsonLd';
 
 // ...
 
-export default async function Page({ params }: { params: { id: string } }) {
-    const id = parseInt(params.id);
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id: idStr } = await params;
+    const id = parseInt(idStr);
     const painting = await getPainting(id);
 
     if (!painting) return <PaintingDetail id={id} />;
