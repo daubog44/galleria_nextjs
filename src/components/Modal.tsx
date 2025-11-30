@@ -44,18 +44,6 @@ export default function Modal({ children }: { children: React.ReactNode }) {
                     >
                         {children}
                     </div>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onDismiss();
-                        }}
-                        className="absolute -top-12 right-0 z-[60] text-white/80 hover:text-white transition-colors p-2 bg-white/10 rounded-full backdrop-blur-sm cursor-pointer hover:bg-white/20 pointer-events-auto"
-                        aria-label="Chiudi"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 md:w-10 md:h-10">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
                 </div>
             </div>
         </div>

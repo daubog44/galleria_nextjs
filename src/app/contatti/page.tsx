@@ -1,10 +1,9 @@
 import { Metadata } from "next";
-import { db } from '@/db';
-import { settings, externalLinks } from '@/db/schema';
 import { Mail, Phone, Instagram, Facebook, MessageCircle, Twitter, Linkedin, Youtube, Globe } from 'lucide-react';
 
 import { getPageSeo } from '@/lib/seo';
 import { JsonLd } from '@/components/JsonLd';
+import { getSettings, getExternalLinks } from "@/app/actions";
 
 export async function generateMetadata() {
     const seo = await getPageSeo('contact');
@@ -26,10 +25,11 @@ const ICONS = {
     phone: Phone,
 };
 
+export const dynamic = 'force-static';
+
 export default async function Contact() {
-    const currentSettings = await db.select().from(settings).limit(1);
-    const setting = currentSettings[0] || {};
-    const links = await db.select().from(externalLinks).orderBy(externalLinks.order);
+    const setting: any = await getSettings();
+    const links = await getExternalLinks();
     const seo = await getPageSeo('contact');
 
     const jsonLd = {
@@ -89,7 +89,7 @@ export default async function Contact() {
                 )}
 
                 {/* Dynamic Links */}
-                {links.map((link) => {
+                {links.map((link: any) => {
                     const Icon = ICONS[link.icon as keyof typeof ICONS] || Globe;
                     return (
                         <a

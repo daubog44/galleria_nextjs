@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPainting } from '@/app/actions';
 
+import ModalCloseButton from './ModalCloseButton';
+
 interface PaintingDetailProps {
     id: number;
     isModal?: boolean;
@@ -39,6 +41,8 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
         );
     }
 
+    // ...
+
     // Modal with info styling (Legacy match)
     if (isModal) {
         return (
@@ -52,7 +56,8 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
                     />
                 </div>
 
-                <div className="w-full md:w-[400px] lg:w-[450px] flex-shrink-0 bg-black/80 backdrop-blur-xl text-gray-300 p-8 rounded-xl shadow-2xl flex flex-col justify-center border border-white/10">
+                <div className="relative w-full md:w-[400px] lg:w-[450px] flex-shrink-0 bg-black/80 backdrop-blur-xl text-gray-300 p-8 rounded-xl shadow-2xl flex flex-col justify-center border border-white/10">
+                    <ModalCloseButton />
                     {painting.title && (
                         <h3 className="text-3xl font-serif text-white mb-6 leading-tight">{painting.title}</h3>
                     )}

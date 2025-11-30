@@ -19,7 +19,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 import { JsonLd } from '@/components/JsonLd';
 
-// ...
+import { db } from "@/db";
+import { paintings } from "@/db/schema";
+
+export async function generateStaticParams() {
+    const allPaintings = await db.select({ id: paintings.id }).from(paintings);
+    return allPaintings.map((painting) => ({
+        id: painting.id.toString(),
+    }));
+}
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id: idStr } = await params;

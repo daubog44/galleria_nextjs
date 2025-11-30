@@ -53,3 +53,32 @@ export const getPainting = unstable_cache(
     ['painting-detail'],
     { tags: ['paintings'] }
 );
+
+import { settings, externalLinks } from "@/db/schema";
+
+export const getSettings = unstable_cache(
+    async () => {
+        try {
+            const res = await db.select().from(settings).limit(1);
+            return res[0] || {};
+        } catch (error) {
+            console.warn("Database connection failed in getSettings:", error);
+            return {};
+        }
+    },
+    ['settings-data'],
+    { tags: ['settings'] }
+);
+
+export const getExternalLinks = unstable_cache(
+    async () => {
+        try {
+            return await db.select().from(externalLinks).orderBy(externalLinks.order);
+        } catch (error) {
+            console.warn("Database connection failed in getExternalLinks:", error);
+            return [];
+        }
+    },
+    ['external-links-list'],
+    { tags: ['external-links'] }
+);
