@@ -21,6 +21,9 @@ done
 
 echo "Building and Starting App..."
 docker compose pull
+# Force recreate umami to pick up new env vars
+docker compose stop umami
+docker compose rm -f umami
 docker compose up -d --remove-orphans
 # Run Umami setup
 ./setup-umami.sh
