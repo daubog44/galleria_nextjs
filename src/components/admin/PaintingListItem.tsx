@@ -28,8 +28,8 @@ export function PaintingListItem({ painting }: { painting: Painting }) {
 
     return (
         <li>
-            <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
-                <div className="flex items-center">
+            <div className="px-4 py-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center w-full sm:w-auto">
                     <div className="flex-shrink-0 h-16 w-16 relative">
                         <Image
                             src={painting.imageUrl}
@@ -38,16 +38,16 @@ export function PaintingListItem({ painting }: { painting: Painting }) {
                             className="object-cover rounded-md"
                         />
                     </div>
-                    <div className="ml-4">
+                    <div className="ml-4 min-w-0 flex-1">
                         <h3 className="text-lg font-medium text-indigo-600 truncate dark:text-indigo-400">
                             {painting.title || 'Senza titolo'}
                         </h3>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 truncate">
                             {painting.width && painting.height ? `${painting.width}x${painting.height} cm • ` : ''}{painting.price || 'Prezzo su richiesta'}
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-end w-full sm:w-auto space-x-4">
                     <form action={toggleSold}>
                         <input type="hidden" name="id" value={painting.id} />
                         <input type="hidden" name="currentStatus" value={String(painting.sold)} />
@@ -63,15 +63,15 @@ export function PaintingListItem({ painting }: { painting: Painting }) {
                     </form>
                     <Link
                         href={`/admin/paintings/${painting.id}`}
-                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4"
+                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 p-2"
                         title="Modifica"
                     >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className="w-5 h-5" />
                     </Link>
                     <DeleteForm
                         id={painting.id}
                         action={deletePainting}
-                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 p-2"
                         onOptimisticDelete={() => setIsDeleted(true)}
                         onDeleteError={() => {
                             setIsDeleted(false);
