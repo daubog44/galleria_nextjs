@@ -51,3 +51,7 @@ next-env.d.ts
 .env.local
 .gitignore
 /letsencrypt
+
+# site data
+/public/sitedata/paintings/*
+!/public/sitedata/paintings/.keep
