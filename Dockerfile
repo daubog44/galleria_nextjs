@@ -43,6 +43,9 @@ RUN chown nextjs:nodejs .next
 RUN NODE_ENV=development npm install --no-save drizzle-kit tsx dotenv
 ENV NODE_ENV production
 
+# Install gosu for permission handling
+RUN apt-get update && apt-get install -y gosu && rm -rf /var/lib/apt/lists/*
+
 # Fix permissions for nextjs user
 RUN chown -R nextjs:nodejs /home/nextjs
 
@@ -50,7 +53,7 @@ RUN chown -R nextjs:nodejs /home/nextjs
 COPY --chown=nextjs:nodejs entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
-USER nextjs
+# USER nextjs - Commented out to allow entrypoint to run as root for permission fix
 
 EXPOSE 3000
 
