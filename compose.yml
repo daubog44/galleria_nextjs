@@ -46,7 +46,7 @@ services:
       - "traefik.http.routers.umami.rule=Host(`${UMAMI_HOST}`)"
       - "traefik.http.routers.umami.entrypoints=websecure"
       - "traefik.http.routers.umami.tls.certresolver=myresolver"
-      - "traefik.http.middlewares.umami-headers.headers.customresponseheaders.Content-Security-Policy=frame-ancestors 'self' https://galleriaermetica.it https://analytics.galleriaermetica.it"
+      - "traefik.http.middlewares.umami-headers.headers.customresponseheaders.Content-Security-Policy=frame-ancestors 'self' https://${DOMAIN_NAME} https://${UMAMI_HOST}"
       - "traefik.http.routers.umami.middlewares=umami-headers"
       - "traefik.http.services.umami.loadbalancer.server.port=3000"
 
