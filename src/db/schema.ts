@@ -33,6 +33,9 @@ export const reviews = pgTable('reviews', {
     imageUrl: text('image_url'),
     filePath: text('file_path'),
     slug: text('slug').unique(),
+    seoTitle: text('seo_title'),
+    seoDescription: text('seo_description'),
+    seoAltText: text('seo_alt_text'),
 });
 
 export const users = pgTable('users', {
@@ -43,6 +46,7 @@ export const users = pgTable('users', {
 
 export const settings = pgTable('settings', {
     id: serial('id').primaryKey(),
+    navbarTitle: text('navbar_title').default('Galleria Ermetica'),
     email: text('email'),
     phone: text('phone'),
     whatsapp: text('whatsapp'),
@@ -62,6 +66,7 @@ export const seoMetadata = pgTable('seo_metadata', {
     id: serial('id').primaryKey(),
     pageKey: text('page_key').notNull().unique(), // 'home', 'biography', 'reviews', 'contact'
     title: text('title'),
+    subtitle: text('subtitle'),
     description: text('description'),
     imageAltText: text('image_alt_text'),
 });

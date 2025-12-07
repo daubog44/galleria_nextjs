@@ -25,7 +25,7 @@ export default function FooterClient({ settings, links }: { settings: any, links
     }
 
     return (
-        <footer className="bg-[#222] text-white py-16 mt-20 dark:bg-[#111]">
+        <footer className="bg-[#222] text-white py-16 dark:bg-[#111]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-8">
                 <div className="text-center md:text-left">
                     <p className="text-[#aaa] text-sm">
@@ -69,6 +69,14 @@ export default function FooterClient({ settings, links }: { settings: any, links
                         </p>
                     )}
                 </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-[#333] text-xs text-[#666] text-center md:text-left">
+                <p className="leading-relaxed">
+                    Questo sito utilizza <a href="https://umami.is" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#bbb]">Umami Analytics</a> per statistiche anonime nel pieno rispetto della privacy (nessuna raccolta di IP, nessuna condivisione dati con terze parti).
+                    <br />
+                    Il server è ospitato in Italia, conforme alle normative GDPR.
+                </p>
             </div>
         </footer>
     );

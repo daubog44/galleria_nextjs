@@ -11,6 +11,7 @@ interface PageSeoManagerProps {
     pageName: string;
     initialData: {
         title?: string | null;
+        subtitle?: string | null;
         description?: string | null;
         imageAltText?: string | null;
     };
@@ -48,6 +49,7 @@ export default function PageSeoManager({ pageKey, pageName, initialData }: PageS
             <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{pageName} SEO</h3>
             <SeoFields
                 initialTitle={initialData.title}
+                initialSubtitle={initialData.subtitle}
                 initialDescription={initialData.description}
                 initialAltText={initialData.imageAltText}
                 contextText={`Impostazioni SEO per la pagina ${pageName}.`}

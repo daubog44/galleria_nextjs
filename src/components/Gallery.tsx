@@ -54,8 +54,8 @@ export default function Gallery({ initialPaintings }: GalleryProps) {
     return (
         <>
             <MasonryGrid
-                items={paintings.map((painting) => (
-                    <PaintingCard key={painting.id} painting={painting} />
+                items={paintings.map((painting, index) => (
+                    <PaintingCard key={painting.id} painting={painting} priority={index < 6} />
                 ))}
             />
 

@@ -71,16 +71,18 @@ export type UpdateContactInfoState = {
 export async function updateContactInfo(prevState: UpdateContactInfoState, formData: FormData): Promise<UpdateContactInfoState> {
     const email = formData.get('email') as string;
     const phone = formData.get('phone') as string;
+    const navbarTitle = formData.get('navbarTitle') as string;
 
     try {
         // Check if settings exist
         const existingSettings = await db.select().from(settings).limit(1);
 
         if (existingSettings.length === 0) {
-            // Create new settings
+            // Create new settings (with default id)
             await db.insert(settings).values({
                 email,
                 phone,
+                navbarTitle,
             });
         } else {
             // Update existing settings
@@ -88,18 +90,65 @@ export async function updateContactInfo(prevState: UpdateContactInfoState, formD
                 .set({
                     email,
                     phone,
+                    navbarTitle,
                 })
                 .where(eq(settings.id, existingSettings[0].id));
         }
 
         revalidatePath('/admin/settings');
         revalidatePath('/contatti');
-        revalidatePath('/', 'layout'); // Revalidate footer
-        return { success: 'Informazioni di contatto aggiornate con successo' };
+        revalidatePath('/', 'layout'); // Revalidate footer and navbar
+        return { success: 'Impostazioni aggiornate con successo' };
     } catch (error) {
-        console.error('Failed to update contact info:', error);
-        return { error: 'Errore durante l\'aggiornamento delle informazioni di contatto' };
+        console.error('Failed to update settings:', error);
+        return { error: 'Errore durante l\'aggiornamento delle impostazioni' };
     }
 }
 
 // getDatabaseBackup and seedDatabase removed as they are replaced by importContent/exportContent in content-actions.ts
+
+import { join } from 'path';
+import sharp from 'sharp';
+
+export async function uploadSiteIcon(formData: FormData) {
+    try {
+        const file = formData.get('icon') as File;
+        if (!file) {
+            return { error: 'Nessun file selezionato' };
+        }
+
+        // Validate file type (basic check)
+        if (!file.type.startsWith('image/')) {
+            return { error: 'Il file deve essere un\'immagine' };
+        }
+
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const publicDir = join(process.cwd(), 'public');
+
+        // Define paths
+        const icon192Path = join(publicDir, 'icon-192x192.png');
+        const icon512Path = join(publicDir, 'icon-512x512.png');
+
+        try {
+            // Use Sharp to resize and save directly
+            await sharp(buffer)
+                .resize(192, 192)
+                .toFile(icon192Path);
+
+            await sharp(buffer)
+                .resize(512, 512)
+                .toFile(icon512Path);
+
+        } catch (convertError) {
+            console.error('Sharp conversion error:', convertError);
+            return { error: 'Errore durante l\'elaborazione dell\'immagine.' };
+        }
+
+        revalidatePath('/', 'layout');
+        return { success: 'Icona aggiornata con successo' };
+
+    } catch (error) {
+        console.error('Upload error:', error);
+        return { error: 'Si è verificato un errore durante il caricamento' };
+    }
+}

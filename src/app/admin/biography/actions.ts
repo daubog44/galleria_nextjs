@@ -91,6 +91,7 @@ export async function updateBiography(formData: FormData) {
     revalidateTag('biography', "max");
     revalidatePath('/admin/biography');
     revalidatePath('/biografia');
+    revalidatePath('/sitemap.xml');
 
     return { success: true, message: 'Biografia aggiornata con successo!' };
 }

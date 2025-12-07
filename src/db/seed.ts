@@ -6,6 +6,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { hash } from 'bcryptjs';
 
+dotenv.config({ path: '.env.local' });
 dotenv.config({ path: '.env' });
 
 const PUBLIC_PATH = path.resolve(__dirname, '../../public');
@@ -129,7 +130,11 @@ async function main() {
             fs.mkdirSync(dir, { recursive: true });
         }
 
-        fs.writeFileSync(fullPath, r.content, 'utf-8');
+        try {
+            fs.writeFileSync(fullPath, r.content, 'utf-8');
+        } catch (e) {
+            console.warn(`Skipping file write for ${fileName} due to permission error:`, e);
+        }
 
         await db.insert(reviews).values({
             ...r,

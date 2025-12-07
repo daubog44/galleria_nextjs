@@ -80,6 +80,7 @@ export async function createPainting(formData: FormData) {
     revalidatePath('/', 'page');
     revalidatePath('/admin/paintings', 'page');
     revalidateTag('paintings', 'max');
+    revalidatePath('/sitemap.xml');
     redirect('/admin/paintings');
 }
 
@@ -145,6 +146,7 @@ export async function updatePainting(formData: FormData) {
     revalidatePath('/admin/paintings', 'page');
     revalidatePath(`/opera/${id}`, 'page');
     revalidateTag('paintings', 'max');
+    revalidatePath('/sitemap.xml');
 
     return { success: true, message: 'Quadro aggiornato con successo!' };
 }
@@ -175,6 +177,7 @@ export async function deletePainting(formData: FormData) {
     revalidatePath('/admin/paintings', 'page');
     revalidatePath(`/opera/${id}`, 'page');
     revalidateTag('paintings', 'max');
+    revalidatePath('/sitemap.xml');
 }
 
 export async function toggleSold(formData: FormData) {
@@ -191,4 +194,5 @@ export async function toggleSold(formData: FormData) {
     revalidatePath('/admin/paintings', 'page');
     revalidatePath(`/opera/${id}`, 'page');
     revalidateTag('paintings', 'max');
+    revalidatePath('/sitemap.xml');
 }

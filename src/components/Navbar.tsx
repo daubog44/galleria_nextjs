@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { usePathname } from 'next/navigation';
 
-export default function Navbar() {
+export default function Navbar({ siteTitle = 'Galleria Ermetica' }: { siteTitle?: string }) {
     const [isOpen, setIsOpen] = useState(false);
     const { setTheme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -34,6 +34,11 @@ export default function Navbar() {
         { name: 'Contatti', href: '/contatti' },
     ];
 
+    // Dynamic title styling: Last word colored and lighter
+    const titleParts = siteTitle.trim().split(' ');
+    const lastWord = titleParts.length > 1 ? titleParts.pop() : '';
+    const firstPart = titleParts.join(' ');
+
     return (
         <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 dark:bg-[#1a1a1a]/80 dark:border-gray-800 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,7 +46,7 @@ export default function Navbar() {
                     <div className="flex items-center">
                         <Link href="/" className="flex-shrink-0 flex items-center">
                             <span className="font-serif text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-                                Galleria <span className="text-[#c8a876] font-light">Ermetica</span>
+                                {firstPart} {lastWord && <span className="text-[#c8a876] font-light">{lastWord}</span>}
                             </span>
                         </Link>
                     </div>

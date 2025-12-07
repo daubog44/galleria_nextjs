@@ -56,7 +56,10 @@ export async function createReview(formData: FormData) {
         type,
         imageUrl,
         filePath,
-        slug
+        slug,
+        seoTitle: formData.get('seoTitle') as string,
+        seoDescription: formData.get('seoDescription') as string,
+        seoAltText: formData.get('seoAltText') as string,
     });
 
     // await updateMetadataFile(); removed
@@ -64,6 +67,7 @@ export async function createReview(formData: FormData) {
     revalidateTag('style', "max");
     revalidatePath('/admin/reviews');
     revalidatePath('/stile');
+    revalidatePath('/sitemap.xml');
 
     return { success: true, message: 'Recensione creata con successo' };
 }
@@ -127,7 +131,10 @@ export async function updateReview(formData: FormData) {
             type,
             imageUrl,
             filePath,
-            slug: newSlug
+            slug: newSlug,
+            seoTitle: formData.get('seoTitle') as string,
+            seoDescription: formData.get('seoDescription') as string,
+            seoAltText: formData.get('seoAltText') as string,
         })
         .where(eq(reviews.id, id));
 
@@ -136,6 +143,7 @@ export async function updateReview(formData: FormData) {
     revalidateTag('style', "max");
     revalidatePath('/admin/reviews');
     revalidatePath('/stile');
+    revalidatePath('/sitemap.xml');
 
     return { success: true, message: 'Recensione aggiornata con successo' };
 }
@@ -159,4 +167,5 @@ export async function deleteReview(formData: FormData) {
     revalidateTag('style', "max");
     revalidatePath('/admin/reviews');
     revalidatePath('/stile');
+    revalidatePath('/sitemap.xml');
 }

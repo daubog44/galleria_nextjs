@@ -6,8 +6,8 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import Script from "next/script";
 import BackToTop from "@/components/BackToTop";
-import CookieBanner from '@/components/CookieBanner';
 import { Toaster } from 'sonner';
+import InstallPrompt from '@/components/InstallPrompt';
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -28,25 +28,33 @@ export const metadata: Metadata = {
     }
 };
 
-export default function RootLayout({
+import { db } from "@/db";
+import { settings } from "@/db/schema";
+
+// ... existing imports
+
+export default async function RootLayout({
     children,
     modal,
 }: Readonly<{
     children: React.ReactNode;
     modal: React.ReactNode;
 }>) {
+    const currentSettings = await db.select().from(settings).limit(1);
+    const setting = currentSettings[0] || {};
+
     return (
         <html lang="it" suppressHydrationWarning>
             <body className={`${montserrat.variable} ${cormorant.variable} font-sans antialiased bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-50 transition-colors duration-300 flex flex-col min-h-screen`}>
                 <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    <Navbar />
+                    <Navbar siteTitle={setting.navbarTitle || undefined} />
                     <main className="flex-grow">
                         {children}
                         {modal}
                     </main>
                     <Footer />
                     <BackToTop />
-                    <CookieBanner />
+                    <InstallPrompt siteTitle={setting.navbarTitle || undefined} />
                     <Toaster richColors position="top-center" />
                 </ThemeProvider>
                 <Script

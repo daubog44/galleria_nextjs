@@ -20,17 +20,28 @@ export function ContactForm({ initialData }: { initialData: any }) {
     return (
         <form action={formAction} className="space-y-6">
             <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                <input type="email" name="email" id="email" defaultValue={initialData.email} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white sm:text-sm p-2 border" />
+                <label htmlFor="navbarTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Titolo Sito (Navbar)</label>
+                <input type="text" name="navbarTitle" id="navbarTitle" defaultValue={initialData.navbarTitle || 'Galleria Ermetica'} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white sm:text-sm p-2 border" placeholder="Es. Galleria Ermetica" />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Appare in alto a sinistra su tutte le pagine.</p>
             </div>
-            <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Telefono</label>
-                <input type="text" name="phone" id="phone" defaultValue={initialData.phone} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white sm:text-sm p-2 border" />
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-200 mb-4">Contatti</h3>
+                <div className="space-y-4">
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                        <input type="email" name="email" id="email" defaultValue={initialData.email} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white sm:text-sm p-2 border" />
+                    </div>
+                    <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Telefono</label>
+                        <input type="text" name="phone" id="phone" defaultValue={initialData.phone} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white sm:text-sm p-2 border" />
+                    </div>
+                </div>
             </div>
 
             <div className="flex justify-end">
                 <button type="submit" disabled={isPending} className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 cursor-pointer">
-                    {isPending ? 'Salvataggio...' : 'Salva Contatti'}
+                    {isPending ? 'Salvataggio...' : 'Salva Impostazioni'}
                 </button>
             </div>
         </form>

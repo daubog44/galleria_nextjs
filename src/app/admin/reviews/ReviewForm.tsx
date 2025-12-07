@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import MarkdownEditor from '@/components/admin/MarkdownEditor'; // Assumed path based on previous file view
+import MarkdownEditor from '@/components/admin/MarkdownEditor';
+import { SeoFields } from '@/components/admin/SeoFields';
 import { createReview, updateReview } from './actions';
 
 interface ReviewFormProps {
@@ -15,6 +16,9 @@ interface ReviewFormProps {
         type: string | null;
         imageUrl: string | null;
         content: string | null;
+        seoTitle?: string | null;
+        seoDescription?: string | null;
+        seoAltText?: string | null;
     };
     isEditing?: boolean;
 }
@@ -147,6 +151,16 @@ export default function ReviewForm({ initialData, isEditing = false }: ReviewFor
                 <MarkdownEditor initialValue={initialData?.content || ''} name="content" />
             </div>
 
+            <SeoFields
+                initialTitle={initialData?.seoTitle}
+                initialDescription={initialData?.seoDescription}
+                initialAltText={initialData?.seoAltText}
+                contextText={initialData?.content || 'Recensione artista'}
+                imageUrl={initialData?.imageUrl || undefined}
+                onChange={() => { }}
+                hideSubtitle={true}
+            />
+
             <div className="flex justify-end">
                 <button
                     type="submit"
@@ -155,6 +169,6 @@ export default function ReviewForm({ initialData, isEditing = false }: ReviewFor
                     {isEditing ? 'Aggiorna Post' : 'Crea Recensione'}
                 </button>
             </div>
-        </form>
+        </form >
     );
 }
