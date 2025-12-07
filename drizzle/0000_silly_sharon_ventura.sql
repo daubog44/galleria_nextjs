@@ -1,9 +1,9 @@
-CREATE TABLE "biography" (
+CREATE TABLE IF NOT EXISTS "biography" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"content" text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "paintings" (
+CREATE TABLE IF NOT EXISTS "paintings" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" text,
 	"description" text,
@@ -15,7 +15,7 @@ CREATE TABLE "paintings" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "reviews" (
+CREATE TABLE IF NOT EXISTS "reviews" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"title" text,
 	"author" text,
@@ -25,7 +25,7 @@ CREATE TABLE "reviews" (
 	"type" text DEFAULT 'review'
 );
 --> statement-breakpoint
-CREATE TABLE "settings" (
+CREATE TABLE IF NOT EXISTS "settings" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"email" text,
 	"phone" text,
@@ -34,7 +34,7 @@ CREATE TABLE "settings" (
 	"facebook" text
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"username" text NOT NULL,
 	"password" text NOT NULL,

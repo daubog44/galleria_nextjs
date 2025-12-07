@@ -1,4 +1,4 @@
-CREATE TABLE "seo_metadata" (
+CREATE TABLE IF NOT EXISTS "seo_metadata" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"page_key" text NOT NULL,
 	"title" text,
