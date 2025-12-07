@@ -1,4 +1,4 @@
-CREATE TABLE "external_links" (
+CREATE TABLE IF NOT EXISTS "external_links" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"label" text NOT NULL,
 	"url" text NOT NULL,
