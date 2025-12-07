@@ -1,0 +1,1 @@
+ALTER TABLE "biography" ADD COLUMN "image_url" text;
