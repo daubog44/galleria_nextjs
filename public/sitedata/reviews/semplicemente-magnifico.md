@@ -1,0 +1,1 @@
+Ho acquistato 'Tramonto Urbano' e ne sono innamorato. Dal vivo è ancora più bello.

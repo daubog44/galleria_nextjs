@@ -1,8 +1,10 @@
 'use client';
 
-import { updatePainting } from '../actions';
+import { updatePainting, uploadImageAction } from '../actions';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 import { SeoFields } from '@/components/admin/SeoFields';
 
@@ -27,6 +29,8 @@ export default function EditForm({ painting }: { painting: Painting }) {
     const [contextTitle, setContextTitle] = useState(painting.title || '');
     const [contextDescription, setContextDescription] = useState(painting.description || '');
 
+    const router = useRouter();
+
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setUploading(true);
@@ -34,29 +38,37 @@ export default function EditForm({ painting }: { painting: Painting }) {
         const formData = new FormData(event.currentTarget);
         const file = formData.get('image') as File;
 
-        if (file && file.size > 0) {
-            const uploadData = new FormData();
-            uploadData.append('file', file);
-
+        const promise = new Promise(async (resolve, reject) => {
             try {
-                const res = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: uploadData,
-                });
+                if (file && file.size > 0) {
+                    const uploadData = new FormData();
+                    uploadData.append('file', file);
 
-                if (!res.ok) throw new Error('Upload failed');
+                    const res = await uploadImageAction(uploadData);
+                    if (!res.success || !res.url) throw new Error(res.error || 'Upload failed');
+                    formData.set('imageUrl', res.url);
+                }
 
-                const data = await res.json();
-                formData.set('imageUrl', data.url);
+                const result = await updatePainting(formData);
+                if (result.success) {
+                    resolve(result.message);
+                    // Add a small delay for toast to be visible before redirect
+                    setTimeout(() => router.push('/admin/paintings'), 1000);
+                } else {
+                    reject('Errore durante l\'aggiornamento');
+                }
             } catch (e) {
                 console.error(e);
-                alert('Image upload failed');
                 setUploading(false);
-                return;
+                reject('Errore durante l\'aggiornamento del quadro');
             }
-        }
+        });
 
-        await updatePainting(formData);
+        toast.promise(promise, {
+            loading: 'Aggiornamento in corso...',
+            success: (data) => `${data}`,
+            error: (err) => `${err}`,
+        });
     }
 
     function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -84,7 +96,6 @@ export default function EditForm({ painting }: { painting: Painting }) {
                         id="title"
                         defaultValue={painting.title || ''}
                         onChange={(e) => setContextTitle(e.target.value)}
-                        required
                         className="block w-full rounded-lg border-gray-300 dark:border-neutral-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-neutral-800 dark:text-white py-3 px-4 transition-colors"
                     />
                 </div>
@@ -230,7 +241,7 @@ export default function EditForm({ painting }: { painting: Painting }) {
                 <button
                     type="submit"
                     disabled={uploading}
-                    className="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                    className="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
                     {uploading ? (
                         <span className="flex items-center">

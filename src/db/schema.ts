@@ -19,16 +19,20 @@ export const paintings = pgTable('paintings', {
 export const biography = pgTable('biography', {
     id: serial('id').primaryKey(),
     content: text('content').notNull(),
+    imageUrl: text('image_url'),
 });
 
 export const reviews = pgTable('reviews', {
     id: serial('id').primaryKey(),
     title: text('title'),
     author: text('author'),
-    content: text('content').notNull(),
+    content: text('content').notNull(), // This might store the summary or full content if small, but we'll use filePath for MD
     source: text('source'),
     date: text('date'),
     type: text('type').default('review'), // 'review' or 'article'
+    imageUrl: text('image_url'),
+    filePath: text('file_path'),
+    slug: text('slug').unique(),
 });
 
 export const users = pgTable('users', {

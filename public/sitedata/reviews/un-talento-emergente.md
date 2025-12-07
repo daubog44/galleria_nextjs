@@ -1,0 +1,1 @@
+Le opere di Gianmi Ferrari colpiscono per la loro profondità emotiva e l'uso sapiente del colore. Un artista da tenere d'occhio.

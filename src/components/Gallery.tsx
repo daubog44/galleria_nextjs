@@ -48,6 +48,7 @@ export default function Gallery({ initialPaintings }: GalleryProps) {
         if (inView && hasMore && !isLoading) {
             loadMorePaintings();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inView, hasMore, isLoading]);
 
     return (

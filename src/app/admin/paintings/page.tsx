@@ -3,10 +3,7 @@ import { db } from '@/db';
 import { paintings } from '@/db/schema';
 import { desc, sql } from 'drizzle-orm';
 import Link from 'next/link';
-import Image from 'next/image';
-import { deletePainting, toggleSold } from './actions';
 import { PaintingListItem } from '@/components/admin/PaintingListItem';
-import { Edit2 } from 'lucide-react';
 
 export default async function PaintingsList({
     searchParams,

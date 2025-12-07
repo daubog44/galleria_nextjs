@@ -1,0 +1,1 @@
+Una collezione che parla direttamente all'anima. Ogni tela è un viaggio interiore.

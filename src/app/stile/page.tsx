@@ -1,21 +1,22 @@
-
 import React from 'react';
 import { db } from "@/db";
 import { reviews } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { Metadata } from "next";
+import Image from 'next/image';
 
 import { getPageSeo } from '@/lib/seo';
 import { JsonLd } from '@/components/JsonLd';
+import MarkdownViewer from '@/components/MarkdownViewer';
+import { unstable_cache } from 'next/cache';
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
     const seo = await getPageSeo('reviews');
     return {
         title: seo?.title || "Dicono di me - Recensioni",
         description: seo?.description || "Leggi le recensioni e gli articoli sulla mia arte.",
     };
 }
-import { unstable_cache } from 'next/cache';
 
 export const dynamic = 'force-static';
 
@@ -45,17 +46,16 @@ export default async function StylePage() {
         mainEntity: {
             '@type': 'ItemList',
             itemListElement: allReviews.map((item, index) => ({
-                '@type': 'ListItem',
+                '@type': 'BlogPosting',
                 position: index + 1,
-                item: {
-                    '@type': 'Review',
-                    name: item.title,
-                    reviewBody: item.content,
-                    author: {
-                        '@type': 'Person',
-                        name: item.author
-                    }
-                }
+                headline: item.title,
+                articleBody: item.content,
+                author: {
+                    '@type': 'Person',
+                    name: item.author
+                },
+                datePublished: item.date,
+                image: item.imageUrl ? `${process.env.NEXT_PUBLIC_SITE_URL}${item.imageUrl}` : undefined
             }))
         }
     };
@@ -77,9 +77,20 @@ export default async function StylePage() {
                     {allReviews.map((item) => (
                         <div
                             key={item.id}
-                            className="break-inside-avoid bg-white dark:bg-neutral-900/50 p-8 rounded-xl border border-gray-100 dark:border-neutral-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+                            className="break-inside-avoid bg-white dark:bg-neutral-900/50 rounded-xl border border-gray-100 dark:border-neutral-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group overflow-hidden"
                         >
-                            <div className="flex flex-col h-full">
+                            {item.imageUrl && (
+                                <div className="relative w-full h-48 overflow-hidden">
+                                    <Image
+                                        src={item.imageUrl}
+                                        alt={item.title || 'Immagine articolo'}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                </div>
+                            )}
+
+                            <div className="p-8 flex flex-col h-full">
                                 <h3 className="text-xl font-serif font-semibold mb-3 text-gray-900 dark:text-gray-100 group-hover:text-[#c8a876] transition-colors">
                                     {item.title}
                                 </h3>
@@ -100,8 +111,8 @@ export default async function StylePage() {
                                     )}
                                 </div>
 
-                                <div className="prose prose-neutral dark:prose-invert prose-sm max-w-none text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">
-                                    {item.content}
+                                <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                    <MarkdownViewer content={item.content} />
                                 </div>
 
                                 <div className="mt-6 pt-6 border-t border-gray-100 dark:border-neutral-800 flex justify-between items-center">

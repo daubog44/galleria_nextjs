@@ -5,20 +5,29 @@ import { biography, seoMetadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import BiographyForm from './BiographyForm';
 
+import { getBiographyContent } from '@/lib/sitedata';
+
 export const dynamic = 'force-dynamic';
 
 export default async function BiographyPage() {
     let currentContent = '';
+    let currentImageUrl = '';
     let seoData = {};
 
     try {
         const bio = await db.select().from(biography).limit(1);
-        currentContent = bio[0]?.content || '';
+        let content = await getBiographyContent();
+
+        if (bio.length > 0) {
+            currentImageUrl = bio[0].imageUrl || '';
+            if (!content) content = bio[0].content; // Fallback
+        }
+        currentContent = content;
 
         const seo = await db.select().from(seoMetadata).where(eq(seoMetadata.pageKey, 'biography')).limit(1);
         seoData = seo[0] || {};
-    } catch (error) {
-        console.warn("Database connection failed in Admin Biography page (expected during build):", error);
+    } catch (e) {
+        console.warn("Database error in Admin Biography:", e);
     }
 
     return (
@@ -26,6 +35,7 @@ export default async function BiographyPage() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Modifica Biografia</h1>
             <BiographyForm
                 initialContent={currentContent}
+                initialImageUrl={currentImageUrl}
                 initialSeo={seoData}
             />
         </div>

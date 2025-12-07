@@ -1,7 +1,8 @@
 'use server';
 
 import { db } from '@/db';
-import { users } from '@/db/schema';
+// import { updateMetadataFile } from '@/lib/metadata-utils'; removed
+import { users, settings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { compare, hash } from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
@@ -60,7 +61,7 @@ export async function updatePassword(prevState: UpdatePasswordState, formData: F
     }
 }
 
-import { settings } from '@/db/schema';
+
 
 export type UpdateContactInfoState = {
     error?: string;
@@ -100,3 +101,5 @@ export async function updateContactInfo(prevState: UpdateContactInfoState, formD
         return { error: 'Errore durante l\'aggiornamento delle informazioni di contatto' };
     }
 }
+
+// getDatabaseBackup and seedDatabase removed as they are replaced by importContent/exportContent in content-actions.ts

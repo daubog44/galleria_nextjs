@@ -29,24 +29,10 @@ Sito web portfolio moderno e performante per un artista indipendente, sviluppato
     cp .env.example .env
     ```
 
-4.  **Run Database Migrations:**
+4.  **Run:**
     ```bash
-    npm run db:push
-    npm run db:seed # Optional: Seed with test data
+    ./start_local.sh
     ```
-
-5.  **Start Development Server:**
-    ```bash
-    npm run dev
-    ```
-
-## 🐳 Docker Setup
-
-To run the application using Docker Compose:
-
-```bash
-docker compose up -d
-```
 
 This will start the application, database, and Umami analytics.
 

@@ -7,7 +7,7 @@ interface MasonryGridProps {
     columns?: number;
 }
 
-export default function MasonryGrid({ items, columns = 3 }: MasonryGridProps) {
+export default function MasonryGrid({ items }: MasonryGridProps) {
     const [columnCount, setColumnCount] = useState(1);
 
     useEffect(() => {

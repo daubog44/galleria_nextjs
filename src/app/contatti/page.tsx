@@ -5,7 +5,7 @@ import { getPageSeo } from '@/lib/seo';
 import { JsonLd } from '@/components/JsonLd';
 import { getSettings, getExternalLinks } from "@/app/actions";
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
     const seo = await getPageSeo('contact');
     return {
         title: seo?.title || "Contatti - Galleria",
@@ -28,6 +28,7 @@ const ICONS = {
 export const dynamic = 'force-static';
 
 export default async function Contact() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const setting: any = await getSettings();
     const links = await getExternalLinks();
     const seo = await getPageSeo('contact');
@@ -89,6 +90,7 @@ export default async function Contact() {
                 )}
 
                 {/* Dynamic Links */}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {links.map((link: any) => {
                     const Icon = ICONS[link.icon as keyof typeof ICONS] || Globe;
                     return (

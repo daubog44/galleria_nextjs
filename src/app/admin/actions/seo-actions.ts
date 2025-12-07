@@ -5,6 +5,8 @@ import { seoMetadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
+// import { updateMetadataFile } from '@/lib/metadata-utils'; removed
+
 export async function updatePageSeo(formData: FormData) {
     const pageKey = formData.get('pageKey') as string;
     const title = formData.get('seoTitle') as string;
@@ -27,6 +29,8 @@ export async function updatePageSeo(formData: FormData) {
             imageAltText,
         });
     }
+
+    // await updateMetadataFile(); removed
 
     revalidateTag('seo', 'max');
 

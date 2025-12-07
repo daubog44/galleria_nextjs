@@ -22,7 +22,7 @@ export default async function ReviewsPage() {
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recensioni & Articoli</h1>
                 <Link
                     href="/admin/reviews/new"
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
                 >
                     Aggiungi Nuova
                 </Link>
@@ -46,7 +46,7 @@ export default async function ReviewsPage() {
                                 <div className="flex space-x-4">
                                     <Link
                                         href={`/admin/reviews/${review.id}`}
-                                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4"
+                                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4 cursor-pointer"
                                         title="Modifica"
                                     >
                                         <Edit2 className="w-4 h-4" />

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Cookie Policy | Galleria d\'Arte',
-    description: 'Informativa sull\'utilizzo dei cookie e tecnologie simili.',
+    title: 'Cookie Policy | Galleria d&apos;Arte',
+    description: 'Informativa sull&apos;utilizzo dei cookie e tecnologie simili.',
 };
 
 export default function CookiePolicyPage() {
@@ -24,7 +24,7 @@ export default function CookiePolicyPage() {
                     <div className="bg-white dark:bg-stone-900 p-6 rounded-lg shadow-sm border border-stone-100 dark:border-stone-800">
                         <h3 className="text-lg font-medium mb-2">Cookie Tecnici</h3>
                         <p className="text-stone-600 dark:text-stone-400 text-sm mb-4">
-                            Questi cookie sono essenziali per il corretto funzionamento del sito e per fornire i servizi richiesti dagli utenti. Non richiedono il consenso preventivo dell'utente.
+                            Questi cookie sono essenziali per il corretto funzionamento del sito e per fornire i servizi richiesti dagli utenti. Non richiedono il consenso preventivo dell&apos;utente.
                         </p>
                         <ul className="list-disc list-inside text-stone-600 dark:text-stone-400 text-sm space-y-1">
                             <li>Navigazione e sessione</li>
@@ -36,7 +36,7 @@ export default function CookiePolicyPage() {
                     <div className="bg-white dark:bg-stone-900 p-6 rounded-lg shadow-sm border border-stone-100 dark:border-stone-800">
                         <h3 className="text-lg font-medium mb-2">Cookie Analitici (Umami)</h3>
                         <p className="text-stone-600 dark:text-stone-400 text-sm mb-4">
-                            Utilizziamo Umami Analytics per raccogliere statistiche anonime sull'utilizzo del sito. Umami è una soluzione privacy-focused che:
+                            Utilizziamo Umami Analytics per raccogliere statistiche anonime sull&apos;utilizzo del sito. Umami è una soluzione privacy-focused che:
                         </p>
                         <ul className="list-disc list-inside text-stone-600 dark:text-stone-400 text-sm space-y-1">
                             <li>Non utilizza cookie per tracciare gli utenti tra diversi siti.</li>

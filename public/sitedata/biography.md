@@ -1,0 +1,1 @@
+Gianmario Ferrari (Gianmi) nasce nel 1956 nella calda pianura Lombarda a Borghetto Lodigiano dove risiede, autodidatta, interpreta molti percorsi pittorici. Frequenta interessanti rassegne d'arte, concorsi e mostre tenendosi in disparte da ogni movimento e corrente. Consapevole del proprio tempo, istintivo e tenace, ermetico come la sua pittura.

@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Script from "next/script";
 import BackToTop from "@/components/BackToTop";
 import CookieBanner from '@/components/CookieBanner';
+import { Toaster } from 'sonner';
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -46,6 +47,7 @@ export default function RootLayout({
                     <Footer />
                     <BackToTop />
                     <CookieBanner />
+                    <Toaster richColors position="top-center" />
                 </ThemeProvider>
                 <Script
                     src={`${process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL}`}

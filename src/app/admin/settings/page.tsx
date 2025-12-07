@@ -3,6 +3,9 @@ import { settings, externalLinks, seoMetadata } from '@/db/schema';
 import { ContactForm, PasswordForm } from './SettingsForms';
 import LinksManager from './LinksManager';
 import PageSeoManager from './PageSeoManager';
+// Imports removed
+// import MetadataManager from '@/components/admin/MetadataManager'; removed
+import ContentManager from '@/components/admin/ContentManager';
 
 export default async function SettingsPage() {
     const currentSettings = await db.select().from(settings).limit(1);
@@ -52,6 +55,16 @@ export default async function SettingsPage() {
                         pageName="Contatti"
                         initialData={seoList.find(s => s.pageKey === 'contact') || {}}
                     />
+                </div>
+            </div>
+
+            {/* Database Management */}
+            <div className="bg-white dark:bg-neutral-800 shadow rounded-lg p-6 border border-red-100 dark:border-red-900/30">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Gestione Database</h2>
+                <div className="space-y-6">
+                    <ContentManager />
+                    {/* MetadataManager removed */}
+                    {/* BackupButton and SeedButton removed */}
                 </div>
             </div>
         </div>

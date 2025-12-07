@@ -6,6 +6,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { compare } from 'bcryptjs';
+import { createSessionToken } from '@/lib/auth';
 
 export type State = {
     error?: string;
@@ -31,9 +32,10 @@ export async function login(prevState: State, formData: FormData): Promise<State
     const isValid = await compare(password, adminUser.password);
 
     if (isValid) {
-        // Set a simple session cookie
+        // Set a secure session cookie
+        const sessionToken = await createSessionToken();
         const cookieStore = await cookies();
-        cookieStore.set('admin_session', 'true', {
+        cookieStore.set('admin_session', sessionToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',

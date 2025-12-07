@@ -4,10 +4,12 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { ConfirmationModal } from './ConfirmationModal';
 import { Trash2, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface DeleteFormProps {
     id: number;
-    action: (formData: FormData) => Promise<void>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    action: (formData: FormData) => Promise<any>;
     className?: string;
     onOptimisticDelete?: () => void;
     onDeleteError?: () => void;
@@ -40,22 +42,31 @@ export function DeleteForm({ id, action, className, onOptimisticDelete, onDelete
         setIsPending(true);
         const formData = new FormData();
         formData.append('id', id.toString());
-        try {
-            await action(formData);
+
+        const promise = async () => {
+            const result = await action(formData);
+            if (result && typeof result === 'object' && 'error' in result && result.error) {
+                throw new Error(result.error);
+            }
             startTransition(() => {
                 router.refresh();
             });
             setIsPending(false);
-        } catch (error) {
-            console.error("Failed to delete:", error);
-            // Revert optimistic update if failed
-            if (onDeleteError) {
-                onDeleteError();
-            } else {
-                alert("Errore durante l'eliminazione");
+        };
+
+        toast.promise(promise(), {
+            loading: 'Eliminazione in corso...',
+            success: 'Elemento eliminato con successo',
+            error: (err) => {
+                console.error("Failed to delete:", err);
+                // Revert optimistic update if failed
+                if (onDeleteError) {
+                    onDeleteError();
+                }
+                setIsPending(false);
+                return 'Errore durante l\'eliminazione';
             }
-            setIsPending(false);
-        }
+        });
     };
 
     const handleConfirm = (dontAskAgain: boolean) => {

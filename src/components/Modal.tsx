@@ -1,12 +1,11 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 export default function Modal({ children }: { children: React.ReactNode }) {
     const overlay = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(true);
 
 

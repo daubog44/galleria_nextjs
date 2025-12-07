@@ -2,23 +2,21 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isDark, setIsDark] = useState(false);
+    const { setTheme, resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
 
     useEffect(() => {
-        // Check initial theme
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            setIsDark(true);
-            document.documentElement.classList.add('dark');
-        } else {
-            setIsDark(false);
-            document.documentElement.classList.remove('dark');
-        }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
     }, []);
+
+    const isDark = mounted && resolvedTheme === 'dark';
 
     // Hide navbar on admin pages
     if (pathname?.startsWith('/admin')) {
@@ -26,15 +24,7 @@ export default function Navbar() {
     }
 
     const toggleTheme = () => {
-        if (isDark) {
-            document.documentElement.classList.remove('dark');
-            localStorage.theme = 'light';
-            setIsDark(false);
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.theme = 'dark';
-            setIsDark(true);
-        }
+        setTheme(isDark ? 'light' : 'dark');
     };
 
     const navLinks = [

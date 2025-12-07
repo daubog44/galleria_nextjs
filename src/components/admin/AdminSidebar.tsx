@@ -2,35 +2,25 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useTheme } from 'next-themes';
+import { useState, useEffect } from 'react';
 import { logout } from '../../app/admin/login/actions';
 
 export default function AdminSidebar() {
+    const { setTheme, resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const [isDark, setIsDark] = useState(false);
     const pathname = usePathname();
 
-    useLayoutEffect(() => {
-        // Check initial theme
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            setIsDark(true);
-            document.documentElement.classList.add('dark');
-        } else {
-            setIsDark(false);
-            document.documentElement.classList.remove('dark');
-        }
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
     }, []);
 
+    const isDark = mounted && resolvedTheme === 'dark';
+
     const toggleTheme = () => {
-        if (isDark) {
-            document.documentElement.classList.remove('dark');
-            localStorage.theme = 'light';
-            setIsDark(false);
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.theme = 'dark';
-            setIsDark(true);
-        }
+        setTheme(isDark ? 'light' : 'dark');
     };
 
     const toggleSidebar = () => setIsOpen(!isOpen);

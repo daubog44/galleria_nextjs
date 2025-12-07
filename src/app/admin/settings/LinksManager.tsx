@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useActionState, useTransition } from 'react';
+import { useState, useActionState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { addLink, deleteLink, updateLink, type LinkState } from './links-actions';
-import { Instagram, Facebook, MessageCircle, Twitter, Linkedin, Youtube, Globe, Mail, Phone, Trash2, Edit2, Plus, X, Save, Loader2 } from 'lucide-react';
+import { Instagram, Facebook, MessageCircle, Twitter, Linkedin, Youtube, Globe, Mail, Phone, Trash2, Edit2, Plus, Loader2 } from 'lucide-react';
 import { ConfirmationModal } from '@/components/admin/ConfirmationModal';
-
+import { toast } from 'sonner';
 
 
 type Link = {
@@ -38,7 +38,7 @@ export default function LinksManager({ initialLinks }: { initialLinks: Link[] })
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">Link Esterni</h3>
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     Aggiungi Link
@@ -87,7 +87,7 @@ export default function LinksManager({ initialLinks }: { initialLinks: Link[] })
                                 <div className="flex items-center space-x-2">
                                     <button
                                         onClick={() => setEditingId(link.id)}
-                                        className="p-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                                        className="p-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
                                         title="Modifica"
                                     >
                                         <Edit2 className="w-4 h-4" />
@@ -112,11 +112,18 @@ function LinkForm({ initialData, onCancel, onSuccess, isEditing = false }: { ini
     const action = isEditing && initialData ? updateLink.bind(null, initialData.id) : addLink;
     const [state, formAction, isPending] = useActionState<LinkState, FormData>(action, {});
 
-    return (
-        <form action={async (formData) => {
-            await formAction(formData);
+    useEffect(() => {
+        if (state?.error) {
+            toast.error(state.error);
+        }
+        if (state?.success) {
+            toast.success(isEditing ? 'Link aggiornato!' : 'Link aggiunto!');
             onSuccess();
-        }} className="space-y-4">
+        }
+    }, [state, isEditing, onSuccess]);
+
+    return (
+        <form action={formAction} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="label" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Etichetta</label>
@@ -164,7 +171,6 @@ function LinkForm({ initialData, onCancel, onSuccess, isEditing = false }: { ini
                 </div>
             </div>
 
-            {state?.error && <div className="text-red-500 text-sm">{state.error}</div>}
 
             <div className="flex justify-end space-x-3 pt-2">
                 <button
@@ -204,17 +210,23 @@ function DeleteButton({ id }: { id: number }) {
 
     const performDelete = async () => {
         setIsPending(true);
-        try {
-            await deleteLink(id);
-            startTransition(() => {
-                router.refresh();
-            });
-            setIsPending(false);
-        } catch (error) {
-            console.error("Failed to delete link:", error);
-            alert("Errore durante l'eliminazione del link");
-            setIsPending(false);
-        }
+        const promise = deleteLink(id);
+
+        toast.promise(promise, {
+            loading: 'Eliminazione...',
+            success: () => {
+                startTransition(() => {
+                    router.refresh();
+                });
+                setIsPending(false);
+                return 'Link eliminato';
+            },
+            error: (err) => {
+                console.error("Failed to delete link:", err);
+                setIsPending(false);
+                return 'Errore durante eliminazione';
+            }
+        });
     };
 
     const handleConfirm = (dontAskAgain: boolean) => {

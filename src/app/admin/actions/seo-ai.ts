@@ -6,23 +6,24 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API || '');
 
 export async function generateSeoData(context: string, imageUrl?: string) {
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
-        let prompt = `Genera metadati SEO per una pagina web di un sito di un artista (pittura o biografia).
-    Contesto: ${context}
-    Restituisci un oggetto JSON con le seguenti chiavi:
-    - title: Un titolo SEO accattivante (max 60 caratteri).
-    - description: Una meta descrizione concisa (max 160 caratteri).
-    - altText: Un testo alternativo descrittivo per l'immagine (se applicabile).
+        const prompt = `Sei un esperto SEO. Genera titolo e meta description per questa pagina del sito di un artista.
     
-    Assicurati che il tono sia professionale, artistico e coinvolgente.
-    RESTITUISCI SOLO JSON.`;
+    Contesto pagina:
+    ${context}
+    
+    Restituisci SOLO un oggetto JSON con questo formato:
+    {
+        "title": "Titolo ottimizzato (max 60 caratteri)",
+        "description": "Meta description ottimizzata (max 160 caratteri)"
+    }`;
 
         let result;
         if (imageUrl) {
             try {
                 // Check if imageUrl is a relative path (starts with /)
-                let fetchUrl = imageUrl;
+                const fetchUrl = imageUrl;
                 if (imageUrl.startsWith('/')) {
                     // Assuming localhost for relative paths during dev/build, but in production this might be tricky if not fully qualified.
                     // Ideally we use the full URL.

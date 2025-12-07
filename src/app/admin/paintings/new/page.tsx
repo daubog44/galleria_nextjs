@@ -1,7 +1,8 @@
 'use client';
 
-import { createPainting } from '../actions';
+import { createPainting, uploadImageAction } from '../actions';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function NewPaintingPage() {
     const [uploading, setUploading] = useState(false);
@@ -13,30 +14,31 @@ export default function NewPaintingPage() {
         const formData = new FormData(event.currentTarget);
         const file = formData.get('image') as File;
 
-        if (file && file.size > 0) {
-            const uploadData = new FormData();
-            uploadData.append('file', file);
-
+        const promise = new Promise(async (resolve, reject) => {
             try {
-                const res = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: uploadData,
-                });
+                if (file && file.size > 0) {
+                    const uploadData = new FormData();
+                    uploadData.append('file', file);
 
-                if (!res.ok) throw new Error('Upload failed');
+                    const res = await uploadImageAction(uploadData);
+                    if (!res.success || !res.url) throw new Error(res.error || 'Upload failed');
+                    formData.set('imageUrl', res.url);
+                }
 
-                const data = await res.json();
-                formData.set('imageUrl', data.url);
+                await createPainting(formData);
+                resolve('Quadro creato con successo!');
             } catch (e) {
                 console.error(e);
-                alert('Caricamento immagine fallito');
                 setUploading(false);
-                return;
+                reject('Errore durante la creazione del quadro');
             }
-        }
+        });
 
-        await createPainting(formData);
-        // No need to setUploading(false) as we redirect
+        toast.promise(promise, {
+            loading: 'Creazione in corso...',
+            success: (data) => `${data}`,
+            error: (err) => `${err}`,
+        });
     }
 
     return (
@@ -171,7 +173,7 @@ export default function NewPaintingPage() {
                             <button
                                 type="submit"
                                 disabled={uploading}
-                                className="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                                className="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                             >
                                 {uploading ? (
                                     <span className="flex items-center">

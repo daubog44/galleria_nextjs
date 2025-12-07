@@ -4,6 +4,7 @@ import { SeoFields } from '@/components/admin/SeoFields';
 import { updatePageSeo } from '@/app/admin/actions/seo-actions';
 import { useState } from 'react';
 import { Loader2, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PageSeoManagerProps {
     pageKey: string;
@@ -22,16 +23,23 @@ export default function PageSeoManager({ pageKey, pageName, initialData }: PageS
     const handleSubmit = async (formData: FormData) => {
         setIsSaving(true);
         setShowSuccess(false);
-        try {
-            await updatePageSeo(formData);
-            setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 3000);
-        } catch (error) {
-            console.error("Failed to save SEO:", error);
-            // Optionally handle error state here
-        } finally {
-            setIsSaving(false);
-        }
+
+        const promise = updatePageSeo(formData);
+
+        toast.promise(promise, {
+            loading: 'Salvataggio SEO in corso...',
+            success: () => {
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 3000);
+                setIsSaving(false);
+                return `SEO per ${pageName} aggiornato!`;
+            },
+            error: (err) => {
+                console.error("Failed to save SEO:", err);
+                setIsSaving(false);
+                return 'Errore durante il salvataggio SEO';
+            }
+        });
     };
 
     return (

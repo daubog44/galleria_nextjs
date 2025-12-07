@@ -15,6 +15,7 @@ const ICONS = {
     phone: Phone,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function FooterClient({ settings, links }: { settings: any, links: any[] }) {
     const currentYear = new Date().getFullYear();
     const pathname = usePathname();

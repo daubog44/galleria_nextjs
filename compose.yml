@@ -84,6 +84,8 @@ services:
       - .env
     environment:
       DATABASE_URL: ${DATABASE_URL}/galleria
+    volumes:
+      - ./public/sitedata:/app/public/sitedata
     depends_on:
       db:
         condition: service_healthy

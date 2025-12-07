@@ -48,5 +48,6 @@ next-env.d.ts
 /infra/ansible/ssh-key-2025-11-29.key
 /infra/ansible/inventory.ini
 .env.prod
+.env.local
 .gitignore
 /letsencrypt

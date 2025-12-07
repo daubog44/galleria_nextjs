@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+docker compose down --remove-orphans
 
 # Load environment variables from .env
 if [ -f .env ]; then
@@ -22,7 +23,6 @@ done
 echo "Building and Starting App..."
 docker compose pull
 # Full restart to ensure clean state (idempotent)
-docker compose down --remove-orphans
 docker compose up -d
 # Run Umami setup
 ./setup-umami.sh
