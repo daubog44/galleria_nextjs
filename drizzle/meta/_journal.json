@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763926522769,
-      "tag": "0000_silly_sharon_ventura",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1764365642141,
-      "tag": "0001_daily_orphan",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1765047191876,
-      "tag": "0002_greedy_tinkerer",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1765060487012,
-      "tag": "0003_chubby_bloodstrike",
+      "when": 1765078359127,
+      "tag": "0000_nifty_jack_flag",
       "breakpoints": true
     }
   ]

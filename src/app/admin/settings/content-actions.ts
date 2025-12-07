@@ -184,6 +184,7 @@ export async function syncFromFiles() {
 
         // 1. Paintings
         const paintingsDir = path.join(SITEDATA_PATH, 'paintings');
+        await fs.mkdir(paintingsDir, { recursive: true }); // Ensure dir exists
         try {
             const files = await fs.readdir(paintingsDir);
             for (const file of files) {
@@ -213,6 +214,7 @@ export async function syncFromFiles() {
 
         // 2. Reviews (Markdown)
         const reviewsDir = path.join(SITEDATA_PATH, 'reviews');
+        await fs.mkdir(reviewsDir, { recursive: true }); // Ensure dir exists
         try {
             const files = await fs.readdir(reviewsDir);
             for (const file of files) {
