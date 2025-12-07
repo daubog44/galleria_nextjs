@@ -55,3 +55,5 @@ next-env.d.ts
 # site data
 /public/sitedata/paintings/*
 !/public/sitedata/paintings/.keep
+
+/data
