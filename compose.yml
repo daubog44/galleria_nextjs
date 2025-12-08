@@ -74,12 +74,11 @@ services:
 
   app:
     container_name: app
-    image: ${DOCKER_IMAGE_NAME:-daubog44/galleria-app:latest}
-    #    build:
-    #      context: .
-    #      dockerfile: Dockerfile
-    #      args:
-    #        DATABASE_URL: ${DATABASE_URL}/galleria
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}/galleria
     env_file:
       - .env
     environment:

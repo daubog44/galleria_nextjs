@@ -20,10 +20,10 @@ done
 
 # Migrations and seeding are handled by entrypoint.sh inside the app container
 
-echo "Pulling latest images and Starting App..."
-docker compose pull
+echo "Building and Starting App..."
+# docker compose pull # Removed for local build
 # Full restart to ensure clean state (idempotent)
-docker compose up -d --remove-orphans
+docker compose up -d --build --remove-orphans
 # Run Umami setup
 ./setup-umami.sh
 

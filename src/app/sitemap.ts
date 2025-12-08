@@ -2,9 +2,10 @@ import { MetadataRoute } from 'next';
 import { db } from '@/db';
 import { paintings, reviews } from '@/db/schema';
 import { desc } from 'drizzle-orm';
+import { getSiteUrl } from '@/lib/utils';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const baseUrl = getSiteUrl();
 
     // Fetch all paintings
     const allPaintings = await db.select({

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { getSiteUrl } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import Script from "next/script";
@@ -23,9 +24,9 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
     title: "Galleria d'Arte",
     description: "Portfolio artista e galleria opere",
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+    metadataBase: new URL(getSiteUrl()),
     openGraph: {
-        url: process.env.NEXT_PUBLIC_SITE_URL,
+        url: getSiteUrl(),
     }
 };
 
