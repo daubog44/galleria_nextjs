@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
         },
         webpackMemoryOptimizations: true,
     },
-    reactCompiler: true,
-
-
     images: {
         remotePatterns: [
             {
@@ -20,6 +17,8 @@ const nextConfig: NextConfig = {
             },
         ],
     },
+    reactCompiler: true,
+
     async headers() {
         return [
             {

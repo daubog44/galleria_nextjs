@@ -8,8 +8,10 @@ if [ "$(id -u)" = '0' ]; then
     chown -R nextjs:nodejs /app/public/sitedata
     
     # Fix permissions for app directory and next-env.d.ts to allow runtime build
+    # Force delete next-env.d.ts if it exists to allow regeneration by nextjs user
+    rm -f /app/next-env.d.ts
+    
     chown nextjs:nodejs /app
-    [ -f /app/next-env.d.ts ] && chown nextjs:nodejs /app/next-env.d.ts
     chown -R nextjs:nodejs /app/.next 2>/dev/null || true
     
     # Re-run this script as the 'nextjs' user
