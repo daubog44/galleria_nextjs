@@ -15,6 +15,13 @@
       "when": 1765138685125,
       "tag": "0001_soft_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765173996971,
+      "tag": "0002_loving_absorbing_man",
+      "breakpoints": true
     }
   ]
 }

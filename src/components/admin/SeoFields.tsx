@@ -6,18 +6,21 @@ import { Loader2, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SeoFieldsProps {
     initialTitle?: string | null;
+    initialH1?: string | null;
     initialSubtitle?: string | null;
     initialDescription?: string | null;
     initialAltText?: string | null;
     contextText: string;
     imageUrl?: string;
-    onChange: (data: { title: string; subtitle: string; description: string; altText: string }) => void;
+    onChange: (data: { title: string; h1: string; subtitle: string; description: string; altText: string }) => void;
     hideSubtitle?: boolean;
+    hideH1?: boolean;
     onGenerate?: () => Promise<any>;
 }
 
-export function SeoFields({ initialTitle, initialSubtitle, initialDescription, initialAltText, contextText, imageUrl, onChange, onGenerate, hideSubtitle = false }: SeoFieldsProps) {
+export function SeoFields({ initialTitle, initialH1, initialSubtitle, initialDescription, initialAltText, contextText, imageUrl, onChange, onGenerate, hideSubtitle = false, hideH1 = false }: SeoFieldsProps) {
     const [title, setTitle] = useState(initialTitle || '');
+    const [h1, setH1] = useState(initialH1 || '');
     const [subtitle, setSubtitle] = useState(initialSubtitle || '');
     const [description, setDescription] = useState(initialDescription || '');
     const [altText, setAltText] = useState(initialAltText || '');
@@ -28,10 +31,11 @@ export function SeoFields({ initialTitle, initialSubtitle, initialDescription, i
     // Update local state if props change (e.g. initial load)
     useEffect(() => {
         if (initialTitle !== undefined) setTitle(initialTitle || '');
+        if (initialH1 !== undefined) setH1(initialH1 || '');
         if (initialSubtitle !== undefined) setSubtitle(initialSubtitle || '');
         if (initialDescription !== undefined) setDescription(initialDescription || '');
         if (initialAltText !== undefined) setAltText(initialAltText || '');
-    }, [initialTitle, initialSubtitle, initialDescription, initialAltText]);
+    }, [initialTitle, initialH1, initialSubtitle, initialDescription, initialAltText]);
 
     const handleGenerate = async (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent toggling accordion when clicking generate
@@ -47,16 +51,21 @@ export function SeoFields({ initialTitle, initialSubtitle, initialDescription, i
 
             if (data) {
                 const newTitle = data.title || data.seoTitle || title;
+                const newH1 = data.h1 || h1;
+                const newSubtitle = data.subtitle || subtitle;
                 const newDescription = data.description || data.seoDescription || description;
                 const newAltText = data.altText || data.seoAltText || altText;
 
                 setTitle(newTitle);
+                setH1(newH1);
+                setSubtitle(newSubtitle);
                 setDescription(newDescription);
                 setAltText(newAltText);
 
                 onChange({
                     title: newTitle,
-                    subtitle: subtitle,
+                    h1: newH1,
+                    subtitle: newSubtitle,
                     description: newDescription,
                     altText: newAltText
                 });
@@ -69,14 +78,16 @@ export function SeoFields({ initialTitle, initialSubtitle, initialDescription, i
         }
     };
 
-    const update = (key: 'title' | 'subtitle' | 'description' | 'altText', value: string) => {
+    const update = (key: 'title' | 'h1' | 'subtitle' | 'description' | 'altText', value: string) => {
         if (key === 'title') setTitle(value);
+        if (key === 'h1') setH1(value);
         if (key === 'subtitle') setSubtitle(value);
         if (key === 'description') setDescription(value);
         if (key === 'altText') setAltText(value);
 
         onChange({
             title: key === 'title' ? value : title,
+            h1: key === 'h1' ? value : h1,
             subtitle: key === 'subtitle' ? value : subtitle,
             description: key === 'description' ? value : description,
             altText: key === 'altText' ? value : altText
@@ -104,83 +115,102 @@ export function SeoFields({ initialTitle, initialSubtitle, initialDescription, i
                 </button>
             </div>
 
-            {isOpen && (
-                <div className="p-4 pt-0 space-y-4 border-t border-gray-200 dark:border-gray-700">
-                    <div className="pt-4">
-                        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+            <div
+                className={`p-4 pt-0 space-y-4 border-t border-gray-200 dark:border-gray-700 transition-all duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden py-0 border-none'}`}
+                aria-hidden={!isOpen}
+            >
+                <div className="pt-4">
+                    {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-                        <div className="space-y-3">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Meta Titolo</label>
-                                    <input
-                                        type="text"
-                                        name="seoTitle"
-                                        value={title}
-                                        onChange={(e) => update('title', e.target.value)}
-                                        maxLength={60}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                        placeholder="Titolo della pagina"
-                                    />
-                                    <div className="flex justify-end mt-1">
-                                        <span className={`text-xs ${title.length > 60 ? 'text-red-500' : 'text-gray-500'}`}>
-                                            {title.length}/60
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {!hideSubtitle && (
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Sottotitolo <span className="text-xs font-normal text-gray-500">(Visibile in pagina)</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="seoSubtitle"
-                                            value={subtitle}
-                                            onChange={(e) => update('subtitle', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                            placeholder="Sottotitolo visualizzato nell'header"
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
+                    <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Meta Descrizione</label>
-                                <textarea
-                                    name="seoDescription"
-                                    value={description}
-                                    onChange={(e) => update('description', e.target.value)}
-                                    maxLength={160}
-                                    rows={3}
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Meta Titolo <span className="text-xs font-normal text-gray-500">(Tab del browser / Google)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="seoTitle"
+                                    value={title}
+                                    onChange={(e) => update('title', e.target.value)}
+                                    maxLength={60}
                                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    placeholder="Descrizione per motori di ricerca"
+                                    placeholder="Titolo per i risultati di ricerca"
                                 />
                                 <div className="flex justify-end mt-1">
-                                    <span className={`text-xs ${description.length > 160 ? 'text-red-500' : 'text-gray-500'}`}>
-                                        {description.length}/160
+                                    <span className={`text-xs ${title.length > 60 ? 'text-red-500' : 'text-gray-500'}`}>
+                                        {title.length}/60
                                     </span>
                                 </div>
                             </div>
 
-                            {imageUrl && (
+                            {!hideH1 && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Testo Alternativo Immagine</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Titolo Visibile (H1) <span className="text-xs font-normal text-gray-500">(Intestazione pagina)</span>
+                                    </label>
                                     <input
                                         type="text"
-                                        name="seoAltText"
-                                        value={altText}
-                                        onChange={(e) => update('altText', e.target.value)}
+                                        name="seoH1"
+                                        value={h1}
+                                        onChange={(e) => update('h1', e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                        placeholder="Testo alternativo immagine"
+                                        placeholder="Titolo grande nella pagina"
+                                    />
+                                </div>
+                            )}
+
+                            {!hideSubtitle && (
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Sottotitolo <span className="text-xs font-normal text-gray-500">(Visibile sotto l'H1)</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="seoSubtitle"
+                                        value={subtitle}
+                                        onChange={(e) => update('subtitle', e.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        placeholder="Frase introduttiva o sottotitolo"
                                     />
                                 </div>
                             )}
                         </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Meta Descrizione</label>
+                            <textarea
+                                name="seoDescription"
+                                value={description}
+                                onChange={(e) => update('description', e.target.value)}
+                                maxLength={160}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="Descrizione per motori di ricerca"
+                            />
+                            <div className="flex justify-end mt-1">
+                                <span className={`text-xs ${description.length > 160 ? 'text-red-500' : 'text-gray-500'}`}>
+                                    {description.length}/160
+                                </span>
+                            </div>
+                        </div>
+
+                        {imageUrl && (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Testo Alternativo Immagine</label>
+                                <input
+                                    type="text"
+                                    name="seoAltText"
+                                    value={altText}
+                                    onChange={(e) => update('altText', e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    placeholder="Testo alternativo immagine"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 }

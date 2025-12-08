@@ -11,6 +11,7 @@ interface PageSeoManagerProps {
     pageName: string;
     initialData: {
         title?: string | null;
+        h1?: string | null;
         subtitle?: string | null;
         description?: string | null;
         imageAltText?: string | null;
@@ -18,6 +19,14 @@ interface PageSeoManagerProps {
 }
 
 export default function PageSeoManager({ pageKey, pageName, initialData }: PageSeoManagerProps) {
+    // ...
+    // Note: I will need to verify if I need to update the useState/Lines where SeoFields is called.
+    // The previous edit to SeoFields changed its signature.
+    // I am replacing the component call.
+
+    // Debugging initial data persistence
+    console.log(`[PageSeoManager] Rendering for ${pageKey}, initial H1:`, initialData.h1, 'Full Data:', initialData);
+
     const [isSaving, setIsSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
@@ -49,6 +58,7 @@ export default function PageSeoManager({ pageKey, pageName, initialData }: PageS
             <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{pageName} SEO</h3>
             <SeoFields
                 initialTitle={initialData.title}
+                initialH1={initialData.h1}
                 initialSubtitle={initialData.subtitle}
                 initialDescription={initialData.description}
                 initialAltText={initialData.imageAltText}

@@ -1,7 +1,6 @@
 'use client';
 
 import { updateBiography, uploadBiographyImageAction } from './actions';
-import { SeoFields } from '@/components/admin/SeoFields';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'easymde/dist/easymde.min.css';
@@ -14,13 +13,9 @@ import { useRouter } from 'next/navigation';
 interface BiographyFormProps {
     initialContent: string;
     initialImageUrl: string;
-    initialSeo: {
-        title?: string | null;
-        description?: string | null;
-    };
 }
 
-export default function BiographyForm({ initialContent, initialImageUrl, initialSeo }: BiographyFormProps) {
+export default function BiographyForm({ initialContent, initialImageUrl }: BiographyFormProps) {
     const [content, setContent] = useState(initialContent);
     const [preview, setPreview] = useState(initialImageUrl);
     const [uploading, setUploading] = useState(false);
@@ -139,15 +134,7 @@ export default function BiographyForm({ initialContent, initialImageUrl, initial
                 </div>
             </div>
 
-            <div className="border-t border-gray-100 dark:border-neutral-800 pt-8">
-                <SeoFields
-                    initialTitle={initialSeo.title}
-                    initialDescription={initialSeo.description}
-                    contextText={content}
-                    imageUrl={preview || '/sitedata/autore_foto.jpg'}
-                    onChange={() => { }}
-                />
-            </div>
+
 
             <div className="flex justify-end pt-4">
                 <button

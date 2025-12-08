@@ -66,7 +66,8 @@ export const externalLinks = pgTable('external_links', {
 export const seoMetadata = pgTable('seo_metadata', {
     id: serial('id').primaryKey(),
     pageKey: text('page_key').notNull().unique(), // 'home', 'biography', 'reviews', 'contact'
-    title: text('title'),
+    title: text('title'), // Provides valid <title> tag
+    h1: text('h1'), // Provides visible <h1> tag
     subtitle: text('subtitle'),
     description: text('description'),
     imageAltText: text('image_alt_text'),

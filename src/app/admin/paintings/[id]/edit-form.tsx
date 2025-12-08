@@ -314,6 +314,7 @@ export default function EditForm({ painting }: { painting: Painting }) {
                     imageUrl={preview}
                     onChange={() => { }} // Form submission handles values via name attributes
                     hideSubtitle={true}
+                    hideH1={true}
                 />
             </div>
 

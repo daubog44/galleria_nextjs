@@ -24,7 +24,7 @@ export async function generateSeoData(context: string, imageUrl?: string) {
         const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
         const bioContext = await getBiographyContext();
 
-        const prompt = `Sei un esperto SEO. Genera titolo e meta description per questa pagina del sito di un artista.
+        const prompt = `Sei un esperto SEO. Genera titolo, h1, sottotitolo e meta description per questa pagina del sito di un artista.
     
     ${bioContext}
 
@@ -33,7 +33,9 @@ export async function generateSeoData(context: string, imageUrl?: string) {
     
     Restituisci SOLO un oggetto JSON con questo formato:
     {
-        "title": "Titolo ottimizzato (max 60 caratteri)",
+        "title": "Titolo SEO (Meta Title, max 60 chars)",
+        "h1": "Titolo Visibile (H1), coerente col contesto",
+        "subtitle": "Sottotitolo descrittivo e accattivante",
         "description": "Meta description ottimizzata (max 160 caratteri)"
     }`;
 
@@ -110,15 +112,17 @@ export async function generatePaintingMetadata(base64Image: string, mimeType: st
         ${bioContext}
 
         Il tuo compito è:
-        1. Generare un TITOLO creativo e breve per l'opera (evita "Senza titolo", inventa un nome evocativo basato sui colori e soggetti).
-        2. Generare un titolo SEO ottimizzato.
-        3. Generare una meta description SEO ottimizzata.
-        4. Generare un Alt Text descrittivo per l'immagine.
+        1. Generare un TITOLO evocativo per l'opera (H1 visibile).
+        2. Generare un SOTTOTITOLO descrittivo (breve frase che accompagna il titolo).
+        3. Generare un titolo SEO ottimizzato per i motori di ricerca.
+        4. Generare una meta description SEO ottimizzata.
+        5. Generare un Alt Text descrittivo per l'immagine.
 
         Restituisci SOLO un oggetto JSON con questo formato esatto:
         {
-            "title": "Titolo evocativo dell'opera",
-            "seoTitle": "Titolo SEO (max 60 chars)",
+            "title": "Titolo SEO (max 60 chars)",
+            "h1": "Titolo visibile (H1), evocativo e poetico",
+            "subtitle": "Breve sottotitolo descrittivo",
             "seoDescription": "Meta description (max 160 chars)",
             "seoAltText": "Descrizione visiva dettagliata per accessibilità"
         }`;
@@ -134,7 +138,7 @@ export async function generatePaintingMetadata(base64Image: string, mimeType: st
         const response = result.response;
         const text = response.text();
         const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        return JSON.parse(jsonStr);
+        return JSON.parse(jsonStr); // Expects { title, h1, subtitle, seoDescription, seoAltText }
     } catch (error) {
         console.error('Error generating painting metadata:', error);
         throw new Error('Failed to generate painting metadata');

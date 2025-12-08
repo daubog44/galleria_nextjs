@@ -81,12 +81,14 @@ export default async function Biography() {
 
                 <div className="relative z-10 text-center max-w-4xl mx-auto">
                     <h1 className="text-5xl md:text-7xl font-serif font-bold text-stone-900 dark:text-stone-50 mb-8 tracking-tighter drop-shadow-sm">
-                        Biografia
+                        {seo?.h1 || "Biografia"}
                     </h1>
                     <div className="w-24 h-1 bg-amber-400/50 mx-auto mb-10 rounded-full"></div>
-                    <p className="text-xl md:text-2xl text-stone-600 dark:text-stone-400 font-light font-sans max-w-2xl mx-auto leading-relaxed text-balance">
-                        {seo?.subtitle || seo?.description || "Il percorso artistico, le ispirazioni e la storia dietro le opere."}
-                    </p>
+                    {seo?.subtitle && (
+                        <p className="text-xl md:text-2xl text-stone-600 dark:text-stone-400 font-light font-sans max-w-2xl mx-auto leading-relaxed text-balance">
+                            {seo.subtitle}
+                        </p>
+                    )}
                 </div>
             </div>
 

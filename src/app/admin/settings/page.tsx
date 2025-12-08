@@ -8,6 +8,8 @@ import PageSeoManager from './PageSeoManager';
 import ContentManager from '@/components/admin/ContentManager';
 import IconUploader from './IconUploader';
 
+export const dynamic = 'force-dynamic';
+
 export default async function SettingsPage() {
     const currentSettings = await db.select().from(settings).limit(1);
     const setting = currentSettings[0] || {};

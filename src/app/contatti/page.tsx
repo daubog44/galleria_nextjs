@@ -60,7 +60,7 @@ export default async function Contact() {
 
                 <div className="relative z-10 text-center max-w-4xl mx-auto">
                     <h1 className="text-5xl md:text-7xl font-serif font-bold text-stone-900 dark:text-stone-50 mb-8 tracking-tighter drop-shadow-sm">
-                        Contatti
+                        {seo?.h1 || "Contatti"}
                     </h1>
                     <div className="w-24 h-1 bg-amber-400/50 mx-auto mb-10 rounded-full"></div>
                     <p className="text-xl md:text-2xl text-stone-600 dark:text-stone-400 font-light font-sans max-w-2xl mx-auto leading-relaxed text-balance">
