@@ -29,7 +29,7 @@ export default function FooterClient({ settings, links }: { settings: any, links
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-8">
                 <div className="text-center md:text-left">
                     <p className="text-[#aaa] text-sm">
-                        &copy; {currentYear} Galleria Ermetica. Tutti i diritti riservati.
+                        &copy; {currentYear} {settings.navbarTitle || 'Galleria Ermetica'}. Tutti i diritti riservati.
                     </p>
                 </div>
 

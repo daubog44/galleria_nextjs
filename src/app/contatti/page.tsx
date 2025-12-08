@@ -121,7 +121,7 @@ export default async function Contact() {
                                     <Icon className="w-8 h-8 text-stone-700 dark:text-stone-300 group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors duration-300" />
                                 </div>
                                 <h3 className="relative z-10 text-xl font-serif font-bold text-stone-900 dark:text-stone-100 mb-2">{link.label}</h3>
-                                <span className="relative z-10 text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-stone-200 transition-colors opacity-0 group-hover:opacity-100 h-0 group-hover:h-auto overflow-hidden">Vai al link →</span>
+                                <span className="relative z-10 text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-stone-200 transition-colors opacity-0 group-hover:opacity-100">Vai al link →</span>
                             </a>
                         );
                     })}
