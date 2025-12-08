@@ -155,7 +155,7 @@ function LinkForm({ initialData, onCancel, onSuccess, isEditing = false }: { ini
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Icona</label>
                 <div className="grid grid-cols-5 sm:grid-cols-9 gap-2">
                     {Object.entries(ICONS).map(([key, Icon]) => (
-                        <label key={key} className="cursor-pointer">
+                        <label key={key} className="cursor-pointer relative">
                             <input
                                 type="radio"
                                 name="icon"

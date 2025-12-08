@@ -3,7 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import { Quote, X, Maximize2 } from 'lucide-react';
+import Link from 'next/link';
+import { Quote, X, Maximize2, ExternalLink } from 'lucide-react';
 import MarkdownViewer from '@/components/MarkdownViewer';
 
 // Define the shape of the data
@@ -16,6 +17,7 @@ export interface ReviewData {
     date: string | null;
     type: string | null;
     imageUrl: string | null;
+    slug: string | null;
 }
 
 interface ReviewCardProps {
@@ -148,9 +150,20 @@ export default function ReviewCard({ review, index }: ReviewCardProps) {
                 <div className="relative z-10 flex flex-col h-full">
                     {/* Header: Type tag & Date */}
                     <div className="flex justify-between items-center mb-6">
-                        <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-stone-200 dark:border-white/10 text-stone-500 dark:text-stone-400 bg-stone-50/50 dark:bg-white/5">
-                            {review.type || 'Recensione'}
-                        </span>
+                        <div className="flex gap-2">
+                            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-stone-200 dark:border-white/10 text-stone-500 dark:text-stone-400 bg-stone-50/50 dark:bg-white/5">
+                                {review.type || 'Recensione'}
+                            </span>
+                            {review.slug && (
+                                <Link
+                                    href={`/stile/${review.slug}`}
+                                    className="p-1 rounded-full text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors"
+                                    title="Vai alla pagina"
+                                >
+                                    <ExternalLink className="w-3 h-3" />
+                                </Link>
+                            )}
+                        </div>
                         {review.date && (
                             <span className="text-xs font-serif italic text-stone-400 dark:text-stone-500">
                                 {review.date}
@@ -158,11 +171,19 @@ export default function ReviewCard({ review, index }: ReviewCardProps) {
                         )}
                     </div>
 
-                    {/* Title */}
+                    {/* Title can also be a link if slug exists */}
                     {review.title && (
-                        <h3 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-stone-100 mb-4 leading-tight group-hover:text-amber-700/80 dark:group-hover:text-amber-500 transition-colors duration-300">
-                            {review.title}
-                        </h3>
+                        review.slug ? (
+                            <Link href={`/stile/${review.slug}`} className="block mb-4 group/link">
+                                <h3 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-stone-100 leading-tight group-hover/link:text-amber-700 dark:group-hover/link:text-amber-500 transition-colors duration-300">
+                                    {review.title}
+                                </h3>
+                            </Link>
+                        ) : (
+                            <h3 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-stone-100 mb-4 leading-tight group-hover:text-amber-700/80 dark:group-hover:text-amber-500 transition-colors duration-300">
+                                {review.title}
+                            </h3>
+                        )
                     )}
 
                     {/* Image (if any) */}

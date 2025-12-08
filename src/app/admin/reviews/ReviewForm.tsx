@@ -179,6 +179,7 @@ export default function ReviewForm({ initialData, isEditing = false }: ReviewFor
                 onChange={() => { }}
                 onGenerate={handleGenerateSeo}
                 hideSubtitle={true}
+                hideH1={true}
             />
 
             <div className="flex justify-end">
