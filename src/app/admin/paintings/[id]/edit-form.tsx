@@ -1,6 +1,7 @@
 'use client';
 
 import { updatePainting, uploadImageAction } from '../actions';
+import { generatePaintingMetadata } from '@/app/admin/actions/generative-ai';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -28,8 +29,63 @@ export default function EditForm({ painting }: { painting: Painting }) {
     const [preview, setPreview] = useState(painting.imageUrl);
     const [contextTitle, setContextTitle] = useState(painting.title || '');
     const [contextDescription, setContextDescription] = useState(painting.description || '');
+    const [generating, setGenerating] = useState(false);
 
     const router = useRouter();
+
+    async function handleAiAutofill() {
+        if (!preview) {
+            toast.error('Nessuna immagine disponibile per l\'analisi');
+            return;
+        }
+
+        setGenerating(true);
+        const promise = generatePaintingMetadata(preview);
+
+        toast.promise(promise, {
+            loading: 'Analisi con AI in corso (biografia + immagine)...',
+            success: (data) => {
+                // Populate fields
+                if (data.title) (document.getElementById('title') as HTMLInputElement).value = data.title;
+                if (data.description) {
+                    (document.getElementById('description') as HTMLTextAreaElement).value = data.description;
+                    setContextDescription(data.description);
+                }
+                if (data.price) (document.getElementById('price') as HTMLInputElement).value = String(data.price);
+                if (data.width) (document.getElementById('width') as HTMLInputElement).value = String(data.width);
+                if (data.height) (document.getElementById('height') as HTMLInputElement).value = String(data.height);
+
+                // SEO handled by SeoFields? SeoFields is controlled by props but can be overridden?
+                // Actually SeoFields takes initial props. To update it, we might need state or ref.
+                // But wait, SeoFields has no exposed ref.
+                // It likely needs a reset or key change to pick up new values, OR we just let the user re-generate SEO if needed.
+                // BUT the user asked for SEO items too. "generate properties... title, price..."
+                // The prompt returns SEO data too.
+                // Let's rely on the form submission using name attributes which SeoFields might fill?
+                // SeoFields renders inputs with name="seoTitle" etc.
+                // So we can target them by ID if they have IDs, or name.
+                // SeoFields implementation:
+                // <input name="seoTitle" ... />
+
+                const seoTitleInput = document.getElementsByName('seoTitle')[0] as HTMLInputElement;
+                const seoDescInput = document.getElementsByName('seoDescription')[0] as HTMLTextAreaElement;
+                const seoAltInput = document.getElementsByName('seoAltText')[0] as HTMLInputElement;
+
+                if (seoTitleInput && data.seoTitle) seoTitleInput.value = data.seoTitle;
+                if (seoDescInput && data.seoDescription) seoDescInput.value = data.seoDescription;
+                if (seoAltInput && data.seoAltText) seoAltInput.value = data.seoAltText;
+
+                return 'Campi compilati con successo!';
+            },
+            error: 'Errore generazone AI'
+        });
+
+        try {
+            await promise;
+        } catch { } finally {
+            setGenerating(false);
+        }
+    }
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -212,6 +268,29 @@ export default function EditForm({ painting }: { painting: Painting }) {
                             className="object-contain"
                         />
                     </div>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                    <button
+                        type="button"
+                        onClick={handleAiAutofill}
+                        disabled={generating || !preview}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
+                    >
+                        {generating ? (
+                            <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-indigo-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Generando...
+                            </>
+                        ) : (
+                            <>
+                                ✨ Auto-Fill con AI (Stima Prezzi & Dettagli)
+                            </>
+                        )}
+                    </button>
                 </div>
 
                 <div className="flex items-center pt-2">

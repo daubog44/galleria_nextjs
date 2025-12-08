@@ -1,15 +1,33 @@
 'use server';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { db } from '@/db';
+import { biography } from '@/db/schema';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API || '');
 
+async function getBiographyContext() {
+    try {
+        const bio = await db.select().from(biography).limit(1);
+        if (bio && bio.length > 0) {
+            return `INFO ARITSTA (Biografia): ${bio[0].content.substring(0, 5000)}`;
+        }
+        return '';
+    } catch (e) {
+        console.warn('Failed to fetch biography for AI context', e);
+        return '';
+    }
+}
+
 export async function generateSeoData(context: string, imageUrl?: string) {
     try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+        const bioContext = await getBiographyContext();
 
         const prompt = `Sei un esperto SEO. Genera titolo e meta description per questa pagina del sito di un artista.
     
+    ${bioContext}
+
     Contesto pagina:
     ${context}
     

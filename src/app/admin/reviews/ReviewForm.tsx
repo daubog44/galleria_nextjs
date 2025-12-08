@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import MarkdownEditor from '@/components/admin/MarkdownEditor';
 import { SeoFields } from '@/components/admin/SeoFields';
 import { createReview, updateReview } from './actions';
+import { generateReviewSeo } from '@/app/admin/actions/generative-ai';
 
 interface ReviewFormProps {
     initialData?: {
@@ -47,6 +48,24 @@ export default function ReviewForm({ initialData, isEditing = false }: ReviewFor
             loading: isEditing ? 'Aggiornamento in corso...' : 'Creazione in corso...',
             success: (data) => `${data}`,
             error: 'Si è verificato un errore',
+        });
+    }
+
+    async function handleGenerateSeo() {
+        const title = (document.getElementsByName('title')[0] as HTMLInputElement)?.value;
+        const author = (document.getElementsByName('author')[0] as HTMLInputElement)?.value;
+        const date = (document.getElementsByName('date')[0] as HTMLInputElement)?.value;
+        const content = (document.getElementsByName('content')[0] as HTMLInputElement | HTMLTextAreaElement)?.value;
+
+        if (!content && !title) {
+            throw new Error("Compila almeno titolo o contenuto per generare SEO");
+        }
+
+        return await generateReviewSeo({
+            title,
+            author,
+            date,
+            content: content || ''
         });
     }
 
@@ -158,6 +177,7 @@ export default function ReviewForm({ initialData, isEditing = false }: ReviewFor
                 contextText={initialData?.content || 'Recensione artista'}
                 imageUrl={initialData?.imageUrl || undefined}
                 onChange={() => { }}
+                onGenerate={handleGenerateSeo}
                 hideSubtitle={true}
             />
 

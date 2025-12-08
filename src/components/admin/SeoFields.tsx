@@ -13,9 +13,10 @@ interface SeoFieldsProps {
     imageUrl?: string;
     onChange: (data: { title: string; subtitle: string; description: string; altText: string }) => void;
     hideSubtitle?: boolean;
+    onGenerate?: () => Promise<any>;
 }
 
-export function SeoFields({ initialTitle, initialSubtitle, initialDescription, initialAltText, contextText, imageUrl, onChange, hideSubtitle = false }: SeoFieldsProps) {
+export function SeoFields({ initialTitle, initialSubtitle, initialDescription, initialAltText, contextText, imageUrl, onChange, onGenerate, hideSubtitle = false }: SeoFieldsProps) {
     const [title, setTitle] = useState(initialTitle || '');
     const [subtitle, setSubtitle] = useState(initialSubtitle || '');
     const [description, setDescription] = useState(initialDescription || '');
@@ -37,11 +38,17 @@ export function SeoFields({ initialTitle, initialSubtitle, initialDescription, i
         setLoading(true);
         setError('');
         try {
-            const data = await generateSeoData(contextText, imageUrl);
+            let data;
+            if (onGenerate) {
+                data = await onGenerate();
+            } else {
+                data = await generateSeoData(contextText, imageUrl);
+            }
+
             if (data) {
-                const newTitle = data.title || title;
-                const newDescription = data.description || description;
-                const newAltText = data.altText || altText;
+                const newTitle = data.title || data.seoTitle || title;
+                const newDescription = data.description || data.seoDescription || description;
+                const newAltText = data.altText || data.seoAltText || altText;
 
                 setTitle(newTitle);
                 setDescription(newDescription);
