@@ -24,9 +24,6 @@ export default function PageSeoManager({ pageKey, pageName, initialData }: PageS
     // The previous edit to SeoFields changed its signature.
     // I am replacing the component call.
 
-    // Debugging initial data persistence
-    console.log(`[PageSeoManager] Rendering for ${pageKey}, initial H1:`, initialData.h1, 'Full Data:', initialData);
-
     const [isSaving, setIsSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 

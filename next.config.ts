@@ -64,6 +64,22 @@ const nextConfig: NextConfig = {
                 source: '/paintings/:path*',
                 destination: '/sitedata/paintings/:path*',
             },
+            {
+                source: '/icon.png',
+                destination: '/sitedata/icon.png',
+            },
+            {
+                source: '/apple-icon.png',
+                destination: '/sitedata/icon-192x192.png',
+            },
+            {
+                source: '/icon-192x192.png',
+                destination: '/sitedata/icon-192x192.png',
+            },
+            {
+                source: '/icon-512x512.png',
+                destination: '/sitedata/icon-512x512.png',
+            },
         ];
     },
 };

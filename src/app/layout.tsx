@@ -27,7 +27,11 @@ export const metadata: Metadata = {
     metadataBase: new URL(getSiteUrl()),
     openGraph: {
         url: getSiteUrl(),
-    }
+    },
+    icons: {
+        icon: '/icon.png',
+        apple: '/apple-icon.png',
+    },
 };
 
 import { db } from "@/db";

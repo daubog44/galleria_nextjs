@@ -38,7 +38,7 @@ export default function IconUploader() {
         <div className="bg-white dark:bg-neutral-800 shadow rounded-lg p-6 border border-stone-200 dark:border-stone-700/50">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Icona del Sito (PWA)</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                Carica un&apos;immagine quadrata (min. 512x512px). Verrà ridimensionata e utilizzata come icona dell&apos;app quando installata su smartphone e desktop.
+                Carica un&apos;immagine quadrata (min. 512x512px). Verrà utilizzata come icona dell&apos;app (favicon, home screen). Supporto aggiornamento in tempo reale attivo.
             </p>
 
             <div className="flex items-center gap-4">

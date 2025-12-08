@@ -1,11 +1,10 @@
 'use server';
 
 import { db } from '@/db';
-// import { updateMetadataFile } from '@/lib/metadata-utils'; removed
 import { users, settings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { compare, hash } from 'bcryptjs';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export type UpdatePasswordState = {
     error?: string;
@@ -105,8 +104,6 @@ export async function updateContactInfo(prevState: UpdateContactInfoState, formD
     }
 }
 
-// getDatabaseBackup and seedDatabase removed as they are replaced by importContent/exportContent in content-actions.ts
-
 import { join } from 'path';
 import sharp from 'sharp';
 
@@ -126,11 +123,23 @@ export async function uploadSiteIcon(formData: FormData) {
         const publicDir = join(process.cwd(), 'public');
 
         // Define paths
-        const icon192Path = join(publicDir, 'icon-192x192.png');
-        const icon512Path = join(publicDir, 'icon-512x512.png');
+        // Define persistent paths in sitedata
+        const persistentDir = join(process.cwd(), 'public', 'sitedata');
+        const icon192Path = join(persistentDir, 'icon-192x192.png');
+        const icon512Path = join(persistentDir, 'icon-512x512.png');
+        const persistentIconPath = join(persistentDir, 'icon.png');
 
         try {
-            // Use Sharp to resize and save directly
+            // Save unique persistent source icon to public/sitedata
+            // This directory is mounted in Docker, so the file persists and can be shared.
+
+            // Resize to 192x192 and save as PNG (Optimized for Google/Favicon)
+            await sharp(buffer)
+                .resize(192, 192)
+                .png()
+                .toFile(persistentIconPath);
+
+            // Generate PWA icons in sitedata
             await sharp(buffer)
                 .resize(192, 192)
                 .toFile(icon192Path);
@@ -144,6 +153,7 @@ export async function uploadSiteIcon(formData: FormData) {
             return { error: 'Errore durante l\'elaborazione dell\'immagine.' };
         }
 
+        revalidateTag('site-icon', "max"); // Invalidate the cached icon data
         revalidatePath('/', 'layout');
         return { success: 'Icona aggiornata con successo' };
 
