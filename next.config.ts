@@ -57,6 +57,15 @@ const nextConfig: NextConfig = {
             },
         ]
     },
+
+    async rewrites() {
+        return [
+            {
+                source: '/paintings/:path*',
+                destination: '/sitedata/paintings/:path*',
+            },
+        ];
+    },
 };
 
 export default nextConfig;

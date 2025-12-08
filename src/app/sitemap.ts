@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         imageUrl: paintings.imageUrl,
         createdAt: paintings.createdAt,
         title: paintings.title,
+        slug: paintings.slug,
     }).from(paintings).orderBy(desc(paintings.createdAt));
 
     // Static routes
@@ -50,23 +51,45 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         imageUrl: reviews.imageUrl,
     }).from(reviews).orderBy(desc(reviews.id));
 
-    const paintingRoutes: MetadataRoute.Sitemap = allPaintings.map((painting) => ({
-        url: `${baseUrl}/opera/${painting.id}`,
-        lastModified: painting.createdAt || new Date(),
-        changeFrequency: 'weekly',
-        priority: 0.9,
-        images: painting.imageUrl ? [painting.imageUrl] : undefined,
-    }));
+    const paintingRoutes: MetadataRoute.Sitemap = allPaintings.map((painting) => {
+        let imageUrl = painting.imageUrl;
+        // Make image URL absolute if relative
+        if (imageUrl && imageUrl.startsWith('/')) {
+            // Replace /sitedata/paintings with /paintings for customized URL structure
+            // (Requires rewrite in next.config.ts)
+            let cleanUrl = imageUrl;
+            if (imageUrl.startsWith('/sitedata/paintings')) {
+                cleanUrl = imageUrl.replace('/sitedata/paintings', '/paintings');
+            }
+            imageUrl = `${baseUrl}${cleanUrl}`;
+        }
+
+        return {
+            url: `${baseUrl}/opera/${painting.slug || painting.id}`,
+            lastModified: painting.createdAt || new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+            images: imageUrl ? [imageUrl] : undefined,
+        };
+    });
 
     const reviewRoutes: MetadataRoute.Sitemap = allReviews
         .filter(r => r.slug)
-        .map((review) => ({
-            url: `${baseUrl}/stile/${review.slug}`,
-            lastModified: review.date ? new Date(review.date) : new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.7,
-            images: review.imageUrl ? [review.imageUrl] : undefined,
-        }));
+        .map((review) => {
+            let imageUrl = review.imageUrl;
+            // Make image URL absolute if relative
+            if (imageUrl && imageUrl.startsWith('/')) {
+                imageUrl = `${baseUrl}${imageUrl}`;
+            }
+
+            return {
+                url: `${baseUrl}/stile/${review.slug}`,
+                lastModified: review.date ? new Date(review.date) : new Date(),
+                changeFrequency: 'monthly',
+                priority: 0.7,
+                images: imageUrl ? [imageUrl] : undefined,
+            };
+        });
 
     return [...staticRoutes, ...paintingRoutes, ...reviewRoutes];
 }
