@@ -55,7 +55,7 @@ export default function BulkUploadPage() {
                 }
 
                 successCount++;
-                setLogs(prev => [`[OK] ${file.name} -> ${createRes.title} (ID: ${createRes.id})`, ...prev]);
+                setLogs(prev => [`[OK] ${file.name} -> ${createRes.slug} (ID: ${createRes.id})`, ...prev]);
 
             } catch (error) {
                 console.error(error);
