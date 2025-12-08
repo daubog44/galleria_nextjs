@@ -1,6 +1,6 @@
 'use client';
 
-import { createPainting, uploadImageAction } from '../actions';
+import { createPainting } from '../actions';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { generatePaintingMetadata } from '@/app/admin/actions/generative-ai';

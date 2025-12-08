@@ -10,35 +10,8 @@ import { redirect } from 'next/navigation';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-export async function uploadImageAction(formData: FormData) {
-    const file = formData.get('file') as File;
-
-    if (!file) {
-        return { success: false, error: 'No file received.' };
-    }
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = file.name.replaceAll(' ', '_');
-    const uploadDir = path.join(process.cwd(), 'public/sitedata/paintings');
-
-    // Ensure directory exists
-    try {
-        await fs.access(uploadDir);
-    } catch {
-        await fs.mkdir(uploadDir, { recursive: true });
-    }
-
-    try {
-        await fs.writeFile(path.join(uploadDir, filename), buffer);
-        return {
-            success: true,
-            url: `/sitedata/paintings/${filename}`
-        };
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        return { success: false, error: 'Error uploading file.' };
-    }
-}
+// Search for uploadImageAction usage
+// function uploadImageAction removed
 
 import { generatePaintingMetadata } from '@/app/admin/actions/seo-ai';
 
@@ -246,12 +219,14 @@ export async function updatePainting(formData: FormData) {
     const priceRaw = formData.get('price') as string;
     const widthRaw = formData.get('width') as string;
     const heightRaw = formData.get('height') as string;
-    const imageUrl = formData.get('imageUrl') as string;
+    let imageUrl = formData.get('imageUrl') as string;
     const sold = formData.get('sold') === 'on';
     const seoTitle = formData.get('seoTitle') as string;
     const seoDescription = formData.get('seoDescription') as string;
     const seoAltText = formData.get('seoAltText') as string;
     const externalLink = formData.get('externalLink') as string;
+
+    const file = formData.get('image') as File;
 
     const price = priceRaw ? parseFloat(priceRaw) : null;
     const width = widthRaw ? parseFloat(widthRaw) : null;
@@ -261,22 +236,47 @@ export async function updatePainting(formData: FormData) {
         throw new Error('Invalid price');
     }
 
-    // Check for image change to delete old file
+    // Check for existing painting to get current slug
     const existing = await db.select().from(paintings).where(eq(paintings.id, id)).limit(1);
-    if (existing && existing.length > 0) {
-        const oldImageUrl = existing[0].imageUrl;
-        if (oldImageUrl !== imageUrl && oldImageUrl) {
-            // Try to delete old file
+    if (!existing || existing.length === 0) {
+        throw new Error('Painting not found');
+    }
+    const currentPainting = existing[0];
+    const slug = currentPainting.slug; // We generally don't change slug on update unless requested, but user wants slug-based filename.
+
+    // Handle new file upload
+    if (file && file.size > 0) {
+        // 1. Process New Image
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const ext = path.extname(file.name) || '.jpg';
+        // Use slug for filename. If slug is missing (legacy), we should generate one, but for update let's assume slug exists or fallback.
+        const safeSlug = slug || `painting-${id}`;
+        const filename = `${safeSlug}${ext}`;
+        const uploadDir = path.join(process.cwd(), 'public/sitedata/paintings');
+
+        // Ensure directory exists
+        try {
+            await fs.access(uploadDir);
+        } catch {
+            await fs.mkdir(uploadDir, { recursive: true });
+        }
+
+        // Delete old image if different filename (and not a pure replacement of same file)
+        // If the new filename matches existing URL, `writeFile` overwrites, which is what we want.
+        // If existing URL was something else (e.g. '90.jpg'), we should delete it.
+        const oldImageUrl = currentPainting.imageUrl;
+        if (oldImageUrl && !oldImageUrl.endsWith(filename)) {
             try {
-                // Remove leading slash if present for path joining
                 const relativePath = oldImageUrl.startsWith('/') ? oldImageUrl.slice(1) : oldImageUrl;
                 const fullPath = path.join(process.cwd(), 'public', relativePath);
                 await fs.unlink(fullPath);
             } catch {
                 // Ignore error if file doesn't exist
-                // console.error('Failed to delete old image');
             }
         }
+
+        await fs.writeFile(path.join(uploadDir, filename), buffer);
+        imageUrl = `/sitedata/paintings/${filename}`;
     }
 
     await db.update(paintings)
@@ -294,8 +294,6 @@ export async function updatePainting(formData: FormData) {
             externalLink,
         })
         .where(eq(paintings.id, id));
-
-    // await updateMetadataFile(); removed
 
     revalidatePath('/', 'page');
     revalidatePath('/admin/paintings', 'page');

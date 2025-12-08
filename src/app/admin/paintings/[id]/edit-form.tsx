@@ -1,6 +1,6 @@
 'use client';
 
-import { updatePainting, uploadImageAction } from '../actions';
+import { updatePainting } from '../actions';
 import { generatePaintingMetadata } from '@/app/admin/actions/generative-ai';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -92,23 +92,14 @@ export default function EditForm({ painting }: { painting: Painting }) {
         setUploading(true);
 
         const formData = new FormData(event.currentTarget);
-        const file = formData.get('image') as File;
+        // The file input name is 'image', so it's already in formData.
+        // We no longer manually upload here. We let the Server Action handle it to name it correctly.
 
         const promise = new Promise(async (resolve, reject) => {
             try {
-                if (file && file.size > 0) {
-                    const uploadData = new FormData();
-                    uploadData.append('file', file);
-
-                    const res = await uploadImageAction(uploadData);
-                    if (!res.success || !res.url) throw new Error(res.error || 'Upload failed');
-                    formData.set('imageUrl', res.url);
-                }
-
                 const result = await updatePainting(formData);
                 if (result.success) {
                     resolve(result.message);
-                    // Add a small delay for toast to be visible before redirect
                     setTimeout(() => router.push('/admin/paintings'), 1000);
                 } else {
                     reject('Errore durante l\'aggiornamento');

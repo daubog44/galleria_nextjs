@@ -12,6 +12,7 @@ interface Painting {
     imageUrl: string;
     price: number | null;
     sold: boolean;
+    seoAltText?: string | null;
 }
 
 interface GalleryProps {

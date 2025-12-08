@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { uploadImageAction, createPaintingBulk } from '../actions';
+import { createPaintingBulk } from '../actions';
 import { toast } from 'sonner';
 import { Loader2, Upload, AlertCircle, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -34,20 +34,11 @@ export default function BulkUploadPage() {
             setProgress(prev => ({ ...prev, current: i + 1 }));
 
             try {
-                // 1. Upload Image
-                const formData = new FormData();
-                formData.append('file', file);
-                const uploadRes = await uploadImageAction(formData);
-
-                if (!uploadRes.success || !uploadRes.url) {
-                    throw new Error(uploadRes.error || 'Upload immagine fallito');
-                }
-
-                // 2. Create Painting (Auto-SEO will handle missing title/seo)
+                // 1. Create Painting passing the file directly (Slug/AI handled internally)
                 const createData = new FormData();
-                createData.append('imageUrl', uploadRes.url);
-                // No title/desc provided - action handles defaults
+                createData.append('image', file);
 
+                // No title/desc provided - action handles defaults
                 const createRes = await createPaintingBulk(createData);
 
                 if (!createRes.success) {

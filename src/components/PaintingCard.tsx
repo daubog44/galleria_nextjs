@@ -8,6 +8,7 @@ interface Painting {
     imageUrl: string;
     price: number | null;
     sold: boolean;
+    seoAltText?: string | null;
     slug?: string; // Added slug property
 }
 
@@ -17,7 +18,7 @@ export default function PaintingCard({ painting, priority = false }: { painting:
             <div className="relative w-full overflow-hidden">
                 <Image
                     src={painting.imageUrl}
-                    alt={painting.title || 'Opera d\'arte'}
+                    alt={painting.seoAltText || painting.title || 'Dipinto di Gianmi'}
                     width={800}
                     height={1000}
                     className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
