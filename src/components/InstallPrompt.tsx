@@ -15,6 +15,11 @@ export default function InstallPrompt({ siteTitle }: InstallPromptProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        // Check local storage
+        if (typeof window !== 'undefined' && localStorage.getItem('installPromptDismissed') === 'true') {
+            return;
+        }
+
         // Check if running in standalone mode (already installed)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
@@ -61,6 +66,11 @@ export default function InstallPrompt({ siteTitle }: InstallPromptProps) {
         }
     }, []);
 
+    const handleDismiss = () => {
+        setIsVisible(false);
+        localStorage.setItem('installPromptDismissed', 'true');
+    };
+
     const handleInstallClick = async () => {
         if (!deferredPrompt) return;
 
@@ -89,7 +99,7 @@ export default function InstallPrompt({ siteTitle }: InstallPromptProps) {
                     </p>
                 </div>
                 <button
-                    onClick={() => setIsVisible(false)}
+                    onClick={handleDismiss}
                     className="p-2 -mr-2 -mt-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors text-stone-500 dark:text-stone-400"
                     aria-label="Chiudi"
                 >

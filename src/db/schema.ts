@@ -14,6 +14,7 @@ export const paintings = pgTable('paintings', {
     seoDescription: text('seo_description'),
     seoAltText: text('seo_alt_text'),
     externalLink: text('external_link'),
+    slug: text('slug').unique(),
 });
 
 export const biography = pgTable('biography', {

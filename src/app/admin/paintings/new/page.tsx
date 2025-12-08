@@ -111,18 +111,12 @@ export default function NewPaintingPage() {
         setUploading(true);
 
         const formData = new FormData(event.currentTarget);
-        const file = formData.get('image') as File;
 
+        // No need to upload separately anymore, createPainting handles logic
         const promise = new Promise(async (resolve, reject) => {
             try {
-                if (file && file.size > 0) {
-                    const uploadData = new FormData();
-                    uploadData.append('file', file);
-
-                    const res = await uploadImageAction(uploadData);
-                    if (!res.success || !res.url) throw new Error(res.error || 'Upload failed');
-                    formData.set('imageUrl', res.url);
-                }
+                // If AI was used and filled fields, they are already in the inputs
+                // formData captures them automatically
 
                 await createPainting(formData);
                 router.push('/admin/paintings');
@@ -136,7 +130,7 @@ export default function NewPaintingPage() {
         });
 
         toast.promise(promise, {
-            loading: 'Creazione in corso...',
+            loading: 'Creazione e analisi AI in corso...',
             success: (data) => `${data}`,
             error: (err) => `${err}`,
         });
@@ -300,6 +294,7 @@ export default function NewPaintingPage() {
                                 contextText={contextDescription} // Pass updated description
                                 imageUrl={preview || undefined}
                                 onChange={() => { }}
+                                hideSubtitle={true}
                             />
                         </div>
 

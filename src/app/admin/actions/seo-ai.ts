@@ -99,3 +99,44 @@ export async function generateSeoData(context: string, imageUrl?: string) {
         throw new Error('Failed to generate SEO data');
     }
 }
+
+export async function generatePaintingMetadata(base64Image: string, mimeType: string) {
+    try {
+        const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+        const bioContext = await getBiographyContext();
+
+        const prompt = `Sei un esperto curatore d'arte e SEO. Analizza questa immagine di un'opera d'arte.
+        
+        ${bioContext}
+
+        Il tuo compito è:
+        1. Generare un TITOLO creativo e breve per l'opera (evita "Senza titolo", inventa un nome evocativo basato sui colori e soggetti).
+        2. Generare un titolo SEO ottimizzato.
+        3. Generare una meta description SEO ottimizzata.
+        4. Generare un Alt Text descrittivo per l'immagine.
+
+        Restituisci SOLO un oggetto JSON con questo formato esatto:
+        {
+            "title": "Titolo evocativo dell'opera",
+            "seoTitle": "Titolo SEO (max 60 chars)",
+            "seoDescription": "Meta description (max 160 chars)",
+            "seoAltText": "Descrizione visiva dettagliata per accessibilità"
+        }`;
+
+        const imagePart = {
+            inlineData: {
+                data: base64Image,
+                mimeType: mimeType,
+            },
+        };
+
+        const result = await model.generateContent([prompt, imagePart]);
+        const response = result.response;
+        const text = response.text();
+        const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(jsonStr);
+    } catch (error) {
+        console.error('Error generating painting metadata:', error);
+        throw new Error('Failed to generate painting metadata');
+    }
+}

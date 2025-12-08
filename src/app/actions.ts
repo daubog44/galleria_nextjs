@@ -41,9 +41,20 @@ export const getPaintings = unstable_cache(
 );
 
 export const getPainting = unstable_cache(
-    async (id: number) => {
+    async (identifier: string | number) => {
         try {
-            const res = await db.select().from(paintings).where(eq(paintings.id, id)).limit(1);
+            // If it's a number, try fetching by ID first
+            if (!isNaN(Number(identifier))) {
+                const id = Number(identifier);
+                const res = await db.select().from(paintings).where(eq(paintings.id, id)).limit(1);
+                if (res[0]) {
+                    return { ...res[0], sold: res[0].sold ?? false };
+                }
+            }
+
+            // If not found by ID or not a number, try fetching by slug
+            const slug = String(identifier);
+            const res = await db.select().from(paintings).where(eq(paintings.slug, slug)).limit(1);
             return res[0] ? { ...res[0], sold: res[0].sold ?? false } : null;
         } catch (error) {
             console.warn("Database connection failed in getPainting:", error);

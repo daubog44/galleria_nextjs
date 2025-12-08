@@ -4,7 +4,7 @@ import { reviews } from '@/db/schema';
 import Link from 'next/link';
 import { deleteReview } from './actions';
 import { DeleteForm } from '@/components/admin/DeleteForm';
-import { Edit2 } from 'lucide-react';
+import { Edit2, ExternalLink } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +43,17 @@ export default async function ReviewsPage() {
                                         <span className="capitalize">{review.type}</span>
                                     </p>
                                 </div>
-                                <div className="flex space-x-4">
+                                <div className="flex space-x-4 items-center">
+                                    {review.slug && (
+                                        <Link
+                                            href={`/stile/${review.slug}`}
+                                            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 mr-2"
+                                            title="Vedi sul sito"
+                                            target="_blank"
+                                        >
+                                            <ExternalLink className="w-4 h-4" />
+                                        </Link>
+                                    )}
                                     <Link
                                         href={`/admin/reviews/${review.id}`}
                                         className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4 cursor-pointer"

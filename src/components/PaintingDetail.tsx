@@ -5,12 +5,12 @@ import { getPainting } from '@/app/actions';
 import ModalCloseButton from './ModalCloseButton';
 
 interface PaintingDetailProps {
-    id: number;
+    id: string | number;
     isModal?: boolean;
 }
 
 export default async function PaintingDetail({ id, isModal = false }: PaintingDetailProps) {
-    if (id === 0 || isNaN(id)) {
+    if (!id) {
         console.warn(`[PaintingDetail] Invalid ID received: ${id}`);
         return null;
     }
@@ -21,20 +21,31 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
         return null;
     }
 
-    // Check if there is any info to display
-    const hasInfo = !!(painting.title || painting.description || painting.price || painting.sold);
+    // Check if there is significant info to display in the sidebar
+    // If we only have title and sold status (or less), we consider it "minimal info" and hide the sidebar
+    const hasDetails = !!(painting.description || (painting.price && !painting.sold) || painting.width || painting.externalLink);
 
-    // If it's a modal and there is no info, we just show the image centered
-    if (isModal && !hasInfo) {
+    // If it's a modal and there are no extended details (just title/sold), show centered image
+    if (isModal && !hasDetails) {
         return (
             <div className="flex items-center justify-center w-full h-full pointer-events-none">
-                <div className="relative pointer-events-auto">
+                <div className="relative pointer-events-auto group">
                     <Image
                         src={painting.imageUrl}
                         alt="Opera d'arte"
                         className="object-contain max-h-[85vh] max-w-[90vw] w-auto h-auto rounded-md shadow-2xl"
                         priority
                     />
+                    {/* Optional: Show title/sold status on hover or absolute if preferred, but user asked to hide details part */}
+                    {painting.sold ? (
+                        <div className="absolute bottom-4 right-4 bg-red-600/90 text-white px-4 py-2 rounded-full uppercase text-xs font-bold tracking-widest shadow-lg">
+                            Venduto
+                        </div>
+                    ) : painting.price === null ? (
+                        <div className="absolute bottom-4 right-4 bg-stone-800/90 text-white px-4 py-2 rounded-full uppercase text-xs font-bold tracking-widest shadow-lg">
+                            Prezzo su richiesta
+                        </div>
+                    ) : null}
                 </div>
             </div>
         );
@@ -74,11 +85,11 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
                     )}
 
                     <div className="mt-auto space-y-6">
-                        {painting.price && !painting.sold && (
+                        {!painting.sold && (
                             <div className="flex items-baseline justify-between">
                                 <span className="text-sm uppercase tracking-widest text-gray-400">Prezzo</span>
                                 <span className="text-2xl font-serif text-white">
-                                    € {typeof painting.price === 'number' ? painting.price.toFixed(2) : painting.price}
+                                    {painting.price !== null ? `€ ${painting.price.toFixed(2)}` : 'Su richiesta'}
                                 </span>
                             </div>
                         )}
@@ -153,9 +164,9 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
                                     Dimensioni: {painting.width} × {painting.height} cm
                                 </p>
                             )}
-                            {painting.price && !painting.sold && (
+                            {!painting.sold && (
                                 <p className="text-3xl font-serif text-stone-900 dark:text-stone-50">
-                                    € {typeof painting.price === 'number' ? painting.price.toFixed(2) : painting.price}
+                                    {painting.price !== null ? `€ ${painting.price.toFixed(2)}` : 'Prezzo su richiesta'}
                                 </p>
                             )}
                         </div>

@@ -313,6 +313,7 @@ export default function EditForm({ painting }: { painting: Painting }) {
                     contextText={`${contextTitle}\n${contextDescription}`}
                     imageUrl={preview}
                     onChange={() => { }} // Form submission handles values via name attributes
+                    hideSubtitle={true}
                 />
             </div>
 
