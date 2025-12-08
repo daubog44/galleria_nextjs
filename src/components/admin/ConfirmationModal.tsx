@@ -9,9 +9,10 @@ interface ConfirmationModalProps {
     onConfirm: (dontAskAgain: boolean) => void;
     title: string;
     message: string;
+    hideDontAskAgain?: boolean;
 }
 
-export function ConfirmationModal({ isOpen, onClose, onConfirm, title, message }: ConfirmationModalProps) {
+export function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, hideDontAskAgain = false }: ConfirmationModalProps) {
     const [dontAskAgain, setDontAskAgain] = useState(false);
 
     if (!isOpen) return null;
@@ -40,18 +41,20 @@ export function ConfirmationModal({ isOpen, onClose, onConfirm, title, message }
                             {message}
                         </p>
 
-                        <div className="flex items-center mb-6">
-                            <input
-                                id="dont-ask-again"
-                                type="checkbox"
-                                checked={dontAskAgain}
-                                onChange={(e) => setDontAskAgain(e.target.checked)}
-                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:bg-neutral-700 dark:border-neutral-600"
-                            />
-                            <label htmlFor="dont-ask-again" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
-                                Non chiedermelo più
-                            </label>
-                        </div>
+                        {!hideDontAskAgain && (
+                            <div className="flex items-center mb-6">
+                                <input
+                                    id="dont-ask-again"
+                                    type="checkbox"
+                                    checked={dontAskAgain}
+                                    onChange={(e) => setDontAskAgain(e.target.checked)}
+                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded dark:bg-neutral-700 dark:border-neutral-600"
+                                />
+                                <label htmlFor="dont-ask-again" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+                                    Non chiedermelo più
+                                </label>
+                            </div>
+                        )}
 
                         <div className="flex justify-end space-x-3">
                             <button

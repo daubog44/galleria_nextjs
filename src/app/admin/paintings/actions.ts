@@ -40,17 +40,20 @@ export async function uploadImageAction(formData: FormData) {
     }
 }
 
-export async function createPainting(formData: FormData) {
-    const title = formData.get('title') as string;
+import { generateSeoData } from '../actions/seo-ai';
+
+// Internal function to reuse logic
+async function createPaintingInternal(formData: FormData, isBulk: boolean) {
+    let title = formData.get('title') as string;
     const description = formData.get('description') as string;
     const priceRaw = formData.get('price') as string;
     const widthRaw = formData.get('width') as string;
     const heightRaw = formData.get('height') as string;
     const imageUrl = formData.get('imageUrl') as string;
     const sold = formData.get('sold') === 'on';
-    const seoTitle = formData.get('seoTitle') as string;
-    const seoDescription = formData.get('seoDescription') as string;
-    const seoAltText = formData.get('seoAltText') as string;
+    let seoTitle = formData.get('seoTitle') as string;
+    let seoDescription = formData.get('seoDescription') as string;
+    let seoAltText = formData.get('seoAltText') as string;
     const externalLink = formData.get('externalLink') as string;
 
     const price = priceRaw ? parseFloat(priceRaw) : null;
@@ -61,8 +64,9 @@ export async function createPainting(formData: FormData) {
         throw new Error('Invalid price');
     }
 
-    await db.insert(paintings).values({
-        title,
+    // 1. Initial Insert (to get ID)
+    const result = await db.insert(paintings).values({
+        title: title, // Allow empty/null
         description,
         price,
         width,
@@ -73,15 +77,57 @@ export async function createPainting(formData: FormData) {
         seoDescription,
         seoAltText,
         externalLink,
-    });
+    }).returning({ id: paintings.id });
 
-    // await updateMetadataFile(); removed
+    const newId = result[0].id;
+    let updates: Partial<typeof paintings.$inferInsert> = {};
+    let needsUpdate = false;
 
+    // 2. Auto-generate Title if missing -> REMOVED per user request
+    // if (!title) { ... }
+
+    // 3. Auto-generate SEO if missing (Bulk mode or just empty)
+    if (!seoTitle || !seoDescription) {
+        try {
+            // Basic SEO context (handle missing title in prompt)
+            const promptTitle = title || "Senza Titolo";
+            const seoData = await generateSeoData(`Dettaglio dell'opera "${promptTitle}". Immagine: ${imageUrl}`);
+            if (seoData) {
+                if (!seoTitle) {
+                    updates.seoTitle = seoData.title;
+                    // Don't update local var seoTitle to keep it separate from DB title
+                }
+                if (!seoDescription) updates.seoDescription = seoData.description;
+                if (!seoAltText && seoData.seoAltText) updates.seoAltText = seoData.seoAltText;
+                needsUpdate = true;
+            }
+        } catch (e) {
+            console.warn(`Failed to auto-generate SEO for painting ${newId}`, e);
+        }
+    }
+
+    // Apply updates if any
+    if (needsUpdate) {
+        await db.update(paintings).set(updates).where(eq(paintings.id, newId));
+    }
+
+    // Revalidation
     revalidatePath('/', 'page');
     revalidatePath('/admin/paintings', 'page');
     revalidateTag('paintings', 'max');
     revalidatePath('/sitemap.xml');
-    redirect('/admin/paintings');
+
+    return { id: newId, title };
+}
+
+export async function createPainting(formData: FormData) {
+    const result = await createPaintingInternal(formData, false);
+    return { success: true, ...result };
+}
+
+export async function createPaintingBulk(formData: FormData) {
+    const result = await createPaintingInternal(formData, true);
+    return { success: true, id: result.id, title: result.title };
 }
 
 export async function updatePainting(formData: FormData) {
@@ -150,7 +196,32 @@ export async function updatePainting(formData: FormData) {
 
     return { success: true, message: 'Quadro aggiornato con successo!' };
 }
+export async function deleteAllPaintings() {
+    // 1. Get all images to delete files
+    const allPaintings = await db.select().from(paintings);
 
+    for (const painting of allPaintings) {
+        if (painting.imageUrl) {
+            try {
+                const relativePath = painting.imageUrl.startsWith('/') ? painting.imageUrl.slice(1) : painting.imageUrl;
+                const fullPath = path.join(process.cwd(), 'public', relativePath);
+                await fs.unlink(fullPath);
+            } catch {
+                // Ignore individual file deletion errors
+            }
+        }
+    }
+
+    // 2. Delete all records
+    await db.delete(paintings);
+
+    revalidatePath('/', 'page');
+    revalidatePath('/admin/paintings', 'page');
+    revalidateTag('paintings', 'max');
+    revalidatePath('/sitemap.xml');
+
+    return { success: true };
+}
 export async function deletePainting(formData: FormData) {
     const id = parseInt(formData.get('id') as string);
 

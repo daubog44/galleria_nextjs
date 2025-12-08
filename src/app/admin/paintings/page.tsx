@@ -4,6 +4,7 @@ import { paintings } from '@/db/schema';
 import { desc, sql } from 'drizzle-orm';
 import Link from 'next/link';
 import { PaintingListItem } from '@/components/admin/PaintingListItem';
+import DeleteAllPaintingsButton from '@/components/admin/DeleteAllPaintingsButton';
 
 export default async function PaintingsList({
     searchParams,
@@ -33,12 +34,21 @@ export default async function PaintingsList({
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Quadri</h1>
-                <Link
-                    href="/admin/paintings/new"
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Aggiungi Nuovo
-                </Link>
+                <div className="flex space-x-4">
+                    <DeleteAllPaintingsButton />
+                    <Link
+                        href="/admin/paintings/bulk"
+                        className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-neutral-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Caricamento Multiplo
+                    </Link>
+                    <Link
+                        href="/admin/paintings/new"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Aggiungi Nuovo
+                    </Link>
+                </div>
             </div>
 
             <div className="bg-white dark:bg-neutral-800 shadow overflow-hidden sm:rounded-md">

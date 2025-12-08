@@ -5,8 +5,10 @@ import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { generatePaintingMetadata } from '@/app/admin/actions/generative-ai';
 import { SeoFields } from '@/components/admin/SeoFields';
+import { useRouter } from 'next/navigation';
 
 export default function NewPaintingPage() {
+    const router = useRouter();
     const [uploading, setUploading] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
@@ -123,6 +125,8 @@ export default function NewPaintingPage() {
                 }
 
                 await createPainting(formData);
+                router.push('/admin/paintings');
+                router.refresh();
                 resolve('Quadro creato con successo!');
             } catch (e) {
                 console.error(e);

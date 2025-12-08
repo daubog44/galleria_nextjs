@@ -23,6 +23,7 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
     title: "Galleria d'Arte",
     description: "Portfolio artista e galleria opere",
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
     openGraph: {
         url: process.env.NEXT_PUBLIC_SITE_URL,
     }
