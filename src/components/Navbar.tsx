@@ -39,6 +39,18 @@ export default function Navbar({ siteTitle = 'Galleria Ermetica' }: { siteTitle?
     const lastWord = titleParts.length > 1 ? titleParts.pop() : '';
     const firstPart = titleParts.join(' ');
 
+    // Prevent scrolling when menu is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
+
     return (
         <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 dark:bg-[#1a1a1a]/80 dark:border-gray-800 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,17 +146,17 @@ export default function Navbar({ siteTitle = 'Galleria Ermetica' }: { siteTitle?
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            <div className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-white dark:bg-[#1a1a1a] border-t border-gray-100 dark:border-gray-800`}>
-                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {/* Mobile Menu Overlay */}
+            <div className={`${isOpen ? 'block' : 'hidden'} md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-white/95 dark:bg-[#1a1a1a]/95 backdrop-blur-md z-50 overflow-y-auto transition-all duration-300 border-t border-gray-100 dark:border-gray-800`}>
+                <div className="flex flex-col items-center justify-center h-full space-y-8 pb-20">
                     {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
                             onClick={() => setIsOpen(false)}
-                            className={`block px-3 py-2 rounded-md text-base font-medium uppercase tracking-wider ${pathname === link.href
-                                ? 'text-[#c8a876] bg-gray-50 dark:bg-gray-800'
-                                : 'text-gray-600 hover:text-[#c8a876] hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                            className={`text-2xl font-serif font-medium uppercase tracking-widest transition-colors duration-300 ${pathname === link.href
+                                ? 'text-[#c8a876]'
+                                : 'text-gray-800 dark:text-gray-200 hover:text-[#c8a876] dark:hover:text-[#c8a876]'
                                 }`}
                         >
                             {link.name}

@@ -129,8 +129,8 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
         <div className="min-h-screen bg-stone-50 dark:bg-stone-950 flex flex-col">
             <div className="flex-grow flex flex-col lg:flex-row h-full">
                 {/* Image Section - Centered and Large */}
-                <div className="w-full lg:w-2/3 relative bg-stone-200 dark:bg-[#121212] min-h-[60vh] lg:min-h-screen flex items-center justify-center p-8 lg:p-12">
-                    <div className="relative w-full h-full max-h-[85vh] flex items-center justify-center">
+                <div className="w-full lg:w-2/3 relative bg-stone-200 dark:bg-[#121212] min-h-[50vh] lg:min-h-screen flex items-center justify-center p-8 lg:p-12">
+                    <div className="relative w-full h-[50vh] lg:h-full max-h-[85vh] flex items-center justify-center">
                         <Image
                             src={painting.imageUrl}
                             alt={painting.title || 'Opera d\'arte'}
