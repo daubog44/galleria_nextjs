@@ -9,23 +9,29 @@ interface Painting {
     price: number | null;
     sold: boolean;
     seoAltText?: string | null;
-    slug?: string; // Added slug property
+    slug?: string;
+    width?: number | null;
+    height?: number | null;
 }
 
 export default function PaintingCard({ painting, priority = false }: { painting: Painting; priority?: boolean }) {
+    // Use actual dimensions if available, otherwise fallback to default ratio 4:5 (800x1000)
+    const imgWidth = painting.width || 800;
+    const imgHeight = painting.height || 1000;
+
     return (
         <Link href={`/opera/${painting.slug || painting.id}`} scroll={false} className="group block relative mb-8 break-inside-avoid rounded-2xl overflow-hidden bg-white dark:bg-neutral-800 shadow-lg hover:shadow-2xl hover:shadow-stone-200/50 dark:hover:shadow-black/60 transition-all duration-500 hover:-translate-y-1">
             <div className="relative w-full overflow-hidden">
                 <Image
                     src={painting.imageUrl}
                     alt={painting.seoAltText || painting.title || 'Dipinto di Gianmi'}
-                    width={800}
-                    height={1000}
+                    width={imgWidth}
+                    height={imgHeight}
                     className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
                     priority={priority}
                     placeholder="blur"
-                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(800, 1000))}`}
+                    blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(imgWidth, imgHeight))}`}
                 />
 
                 {/* Elegant Gradient Overlay */}
