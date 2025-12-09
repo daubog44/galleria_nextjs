@@ -18,11 +18,6 @@ export default function Navbar({ siteTitle = 'Galleria Ermetica' }: { siteTitle?
 
     const isDark = mounted && resolvedTheme === 'dark';
 
-    // Hide navbar on admin pages
-    if (pathname?.startsWith('/admin')) {
-        return null;
-    }
-
     const toggleTheme = () => {
         setTheme(isDark ? 'light' : 'dark');
     };
@@ -50,6 +45,11 @@ export default function Navbar({ siteTitle = 'Galleria Ermetica' }: { siteTitle?
             document.body.style.overflow = 'unset';
         };
     }, [isOpen]);
+
+    // Hide navbar on admin pages
+    if (pathname?.startsWith('/admin')) {
+        return null;
+    }
 
     return (
         <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-gray-100 dark:bg-[#1a1a1a]/80 dark:border-gray-800 transition-colors duration-300">

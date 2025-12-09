@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getPainting } from '@/app/actions';
 
 import ModalCloseButton from './ModalCloseButton';
+import ModalContactButton from './ModalContactButton';
 
 interface PaintingDetailProps {
     id: string | number;
@@ -22,10 +23,11 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
     }
 
     // Check if there is significant info to display in the sidebar
-    // If we only have title and sold status (or less), we consider it "minimal info" and hide the sidebar
-    const hasDetails = !!(painting.description || (painting.price && !painting.sold) || painting.width || painting.externalLink);
+    // We now include Title as significant info, so if there is a title, we show the sidebar.
+    // This allows the "Contact" button to be in the sidebar standard location.
+    const hasDetails = !!(painting.title || painting.description || (painting.price && !painting.sold) || painting.width || painting.externalLink);
 
-    // If it's a modal and there are no extended details (just title/sold), show centered image
+    // If it's a modal and there are NO details at all (no title, etc.), show centered image
     if (isModal && !hasDetails) {
         return (
             <div className="flex items-center justify-center w-full h-full pointer-events-none">
@@ -42,9 +44,7 @@ export default async function PaintingDetail({ id, isModal = false }: PaintingDe
                             Venduto
                         </div>
                     ) : painting.price === null ? (
-                        <div className="absolute bottom-4 right-4 bg-stone-800/90 text-white px-4 py-2 rounded-full uppercase text-xs font-bold tracking-widest shadow-lg">
-                            Prezzo su richiesta
-                        </div>
+                        <ModalContactButton />
                     ) : null}
                 </div>
             </div>
